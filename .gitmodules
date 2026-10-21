@@ -1,0 +1,3 @@
+[submodule "games-common-core"]
+	path = games-common-core
+	url = https://github.com/IDEMSInternational/games-common-core.git

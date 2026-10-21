@@ -1,0 +1,19 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.tile {
+  fill: var(--fill);
+  stroke: var(--edge);
+  stroke-width: 0.06;
+}
+
+.clue {
+  font-size: 0.5px;
+  font-weight: 650;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  fill: var(--ink);
+  pointer-events: none;
+}

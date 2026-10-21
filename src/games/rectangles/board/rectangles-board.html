@@ -1,0 +1,96 @@
+@let s = state();
+
+<svg
+  class="board-svg"
+  #svg
+  role="img"
+  [attr.aria-label]="'Rectangles puzzle, ' + s.w + ' by ' + s.h"
+  [attr.viewBox]="viewBox()"
+  (pointerdown)="onPointerDown($event)"
+  (pointermove)="onPointerMove($event)"
+  (pointerup)="onPointerUp($event)"
+  (pointercancel)="cancelDrag()"
+  (contextmenu)="$event.preventDefault()"
+>
+  <rect class="board-paper" x="0" y="0" [attr.width]="s.w" [attr.height]="s.h" rx="0.2" />
+
+  @for (l of gridLines(); track $index) {
+    <line class="board-grid" [attr.x1]="l.x1" [attr.y1]="l.y1" [attr.x2]="l.x2" [attr.y2]="l.y2" />
+  }
+
+  @for (t of tiles(); track $index) {
+    <rect
+      class="tile"
+      [style.--fill]="'var(--tile-' + t.colour + ')'"
+      [style.--edge]="'var(--tile-' + t.colour + '-edge)'"
+      [attr.x]="t.x" [attr.y]="t.y" [attr.width]="t.w" [attr.height]="t.h" rx="0.2" />
+  }
+
+  @if (hintView(); as h) {
+    <rect
+      class="board-hint"
+      [attr.x]="h.tile.x"
+      [attr.y]="h.tile.y"
+      [attr.width]="h.tile.w"
+      [attr.height]="h.tile.h"
+      rx="0.2"
+    />
+  }
+
+  @if (previewTile(); as p) {
+    <rect
+      class="board-hint preview"
+      [attr.x]="p.x"
+      [attr.y]="p.y"
+      [attr.width]="p.w"
+      [attr.height]="p.h"
+      rx="0.2"
+    />
+  }
+
+  @for (c of clues(); track $index) {
+    <text class="clue" [attr.x]="c.x" [attr.y]="c.y">{{ c.value }}</text>
+  }
+
+  @if (hintView(); as h) {
+    @if (!preview()) {
+      @if (h.gesture === 'drag') {
+        <circle class="board-finger" r="0.22">
+          <animateMotion [attr.path]="h.path" dur="1.8s" repeatCount="indefinite" keyPoints="0;0;1;1" keyTimes="0;0.2;0.8;1" calcMode="linear" />
+        </circle>
+      } @else {
+        <circle class="board-finger tap" [attr.cx]="h.centre.x" [attr.cy]="h.centre.y" r="0.22" />
+      }
+    }
+  }
+
+  @if (noteLabel(); as label) {
+    <g class="board-label note" role="status">
+      <rect
+        [attr.x]="label.x"
+        [attr.y]="label.y"
+        [attr.width]="label.width"
+        [attr.height]="label.height"
+        [attr.rx]="label.height / 2"
+      />
+      <text [attr.x]="label.x + label.width / 2" [attr.y]="label.y + label.height / 2 + 0.02">
+        {{ label.text }}
+      </text>
+    </g>
+  }
+
+  @if (sizeLabel(); as label) {
+    <g class="board-label" aria-live="polite">
+      <rect
+        [attr.x]="label.x"
+        [attr.y]="label.y"
+        [attr.width]="label.width"
+        [attr.height]="label.height"
+        [attr.rx]="label.height / 2"
+      />
+      <text [attr.x]="label.x + label.width / 2" [attr.y]="label.y + label.height / 2 + 0.02">
+        {{ label.text }}
+      </text>
+    </g>
+  }
+</svg>
