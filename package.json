@@ -9,7 +9,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "apk": "node tools/build-apk.mjs"
+    "apk": "node tools/build-apk.mjs",
+    "app-images": "capacitor-assets generate --android --assetPath games-common-core/assets/app --iconBackgroundColor #f6f3ed --iconBackgroundColorDark #f6f3ed --splashBackgroundColor #f6f3ed --splashBackgroundColorDark #f6f3ed"
   },
   "private": true,
   "packageManager": "npm@11.6.2",
@@ -29,6 +30,7 @@
     "@angular/build": "^21.2.27",
     "@angular/cli": "^21.2.27",
     "@angular/compiler-cli": "^21.2.0",
+    "@capacitor/assets": "^3.0.5",
     "@capacitor/cli": "^8.5.3",
     "jsdom": "^28.0.0",
     "prettier": "^3.8.1",

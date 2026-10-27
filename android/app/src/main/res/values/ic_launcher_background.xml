@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="ic_launcher_background">#FFFFFF</color>
+    <!-- The IDEMS Games background: behind the icon, the launch screen and the game. -->
+    <color name="ic_launcher_background">#F6F3ED</color>
 </resources>
