@@ -49,6 +49,20 @@ describe('App', () => {
     expect(second.state().rects.length).toBe(2);
   });
 
+  it('forgets a finished puzzle, keeping only its size, so a reload starts a new one', () => {
+    const first = sessionOf(TestBed.createComponent(App).componentInstance);
+    first.newGame(1); // 5×5
+    first.solve();
+    expect(first.completed()).toBe(true);
+    expect(localStorage.getItem('rectangles.game')).toBeNull();
+
+    const second = sessionOf(TestBed.createComponent(App).componentInstance);
+    expect(second.gameId()).toMatch(/^5x5#/);
+    expect(second.gameId()).not.toBe(first.gameId());
+    expect(second.completed()).toBe(false);
+    expect(second.canUndo()).toBe(false);
+  });
+
   it('starts a new puzzle if the saved game is unreadable', () => {
     localStorage.setItem('rectangles.game', '{"params":"7x7","moves":[{"kind":"nonsense"}],"position":1}');
     const session = sessionOf(TestBed.createComponent(App).componentInstance);
