@@ -37,7 +37,7 @@ describe('Rectangles play', () => {
     const drag = new RectanglesDrag(cellAt(state, 0.5, 0.5));
     drag.moveTo(cellAt(state, 2.9, 1.1));
     expect(drag.rect).toEqual({ x: 0, y: 0, w: 3, h: 2 });
-    expect(game.applyMove(state, drag.finish())!.rects).toEqual([{ x: 0, y: 0, w: 3, h: 2 }]);
+    expect(game.applyMove(state, drag.finish(state)!)!.rects).toEqual([{ x: 0, y: 0, w: 3, h: 2 }]);
   });
 
   it('replaces overlapped rectangles', () => {
@@ -53,9 +53,26 @@ describe('Rectangles play', () => {
 
   it('removes a rectangle when it is tapped, and ignores taps on empty cells', () => {
     let state = game.applyMove(initial(), { kind: 'draw', rect: { x: 3, y: 0, w: 2, h: 1 } })!;
-    expect(game.applyMove(state, new RectanglesDrag(cellAt(state, 0.5, 0.5)).finish())).toBeNull();
+    expect(game.applyMove(state, new RectanglesDrag(cellAt(state, 0.5, 0.5)).finish(state)!)).toBeNull();
 
-    state = game.applyMove(state, new RectanglesDrag(cellAt(state, 4.5, 0.5)).finish())!;
+    state = game.applyMove(state, new RectanglesDrag(cellAt(state, 4.5, 0.5)).finish(state)!)!;
+    expect(state.rects).toEqual([]);
+  });
+
+  it('with Lock on, refuses rectangles drawn over existing ones, but still allows removing them', () => {
+    let state = game.applyMove(initial(), { kind: 'draw', rect: { x: 0, y: 0, w: 2, h: 2 } })!;
+
+    const over = new RectanglesDrag(cellAt(state, 1.5, 1.5));
+    over.moveTo(cellAt(state, 3.5, 1.5));
+    expect(over.isBlocked(state, true)).toBe(true);
+    expect(over.finish(state, true)).toBeNull();
+    expect(over.finish(state, false)).toEqual({ kind: 'draw', rect: { x: 1, y: 1, w: 3, h: 1 } });
+
+    const beside = new RectanglesDrag(cellAt(state, 2.5, 0.5));
+    beside.moveTo(cellAt(state, 3.5, 1.5));
+    expect(beside.finish(state, true)).toEqual({ kind: 'draw', rect: { x: 2, y: 0, w: 2, h: 2 } });
+
+    state = game.applyMove(state, new RectanglesDrag(cellAt(state, 0.5, 0.5)).finish(state, true)!)!;
     expect(state.rects).toEqual([]);
   });
 

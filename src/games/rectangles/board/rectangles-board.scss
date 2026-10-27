@@ -1,12 +1,35 @@
 :host {
   display: block;
   width: 100%;
+
+  /*
+   * Rectangle colours: soft greens. They carry no meaning; neighbouring
+   * rectangles just get different shades so they're easy to tell apart.
+   */
+  --rect-tile-0: #dcefd9;
+  --rect-tile-0-edge: #5e9a57;
+  --rect-tile-1: #e6f2cf;
+  --rect-tile-1-edge: #7f9a3c;
+  --rect-tile-2: #d2ebe0;
+  --rect-tile-2-edge: #4c9476;
+  --rect-tile-3: #e3eed6;
+  --rect-tile-3-edge: #6f8f4e;
+  --rect-tile-4: #d6efcf;
+  --rect-tile-4-edge: #4f9a49;
+  --rect-tile-5: #e1f0e4;
+  --rect-tile-5-edge: #5f8a6a;
 }
 
 .tile {
   fill: var(--fill);
   stroke: var(--edge);
   stroke-width: 0.06;
+}
+
+/* A drag that Lock won't allow: it overlaps rectangles already drawn. */
+.preview.blocked {
+  fill: var(--danger-soft);
+  stroke: var(--danger);
 }
 
 .clue {

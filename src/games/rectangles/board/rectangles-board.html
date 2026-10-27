@@ -21,8 +21,8 @@
   @for (t of tiles(); track $index) {
     <rect
       class="tile"
-      [style.--fill]="'var(--tile-' + t.colour + ')'"
-      [style.--edge]="'var(--tile-' + t.colour + '-edge)'"
+      [style.--fill]="'var(--rect-tile-' + t.colour + ')'"
+      [style.--edge]="'var(--rect-tile-' + t.colour + '-edge)'"
       [attr.x]="t.x" [attr.y]="t.y" [attr.width]="t.w" [attr.height]="t.h" rx="0.2" />
   }
 
@@ -40,6 +40,7 @@
   @if (previewTile(); as p) {
     <rect
       class="board-hint preview"
+      [class.blocked]="p.blocked"
       [attr.x]="p.x"
       [attr.y]="p.y"
       [attr.width]="p.w"
@@ -80,7 +81,7 @@
   }
 
   @if (sizeLabel(); as label) {
-    <g class="board-label" aria-live="polite">
+    <g class="board-label" [class.note]="label.blocked" aria-live="polite">
       <rect
         [attr.x]="label.x"
         [attr.y]="label.y"

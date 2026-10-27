@@ -25,7 +25,7 @@ interface Segment {
 
 /** Gap (in cells) between a drawn rectangle and the cell lines around it. */
 const INSET = 0.07;
-/** Number of tile colours defined in the theme (--tile-0 ... --tile-5). */
+/** Number of tile colours defined in rectangles-board.scss (--rect-tile-0 ... -5). */
 const TILE_COLOURS = 6;
 
 /** Board for Rectangles, drawn as SVG in cell units. Emits moves; never changes state itself. */
@@ -39,12 +39,14 @@ export class RectanglesBoard {
   readonly state = input.required<RectanglesState>();
   /** Tutorial guidance: highlights a rectangle and animates the gesture. */
   readonly hint = input<RectanglesHint | null>(null);
+  /** Lock: new rectangles may not be drawn over existing ones. */
+  readonly locked = input(false);
   readonly move = output<RectanglesMove>();
 
   private readonly svg = viewChild.required<ElementRef<SVGSVGElement>>('svg');
   private drag: RectanglesDrag | null = null;
-  /** The rectangle being drawn, while a drag is in progress. */
-  protected readonly preview = signal<Rect | null>(null);
+  /** The rectangle being drawn, while a drag is in progress, and whether Lock blocks it. */
+  protected readonly preview = signal<{ rect: Rect; blocked: boolean } | null>(null);
 
   protected readonly viewBox = computed(() => {
     const { w, h } = this.state();
@@ -97,14 +99,16 @@ export class RectanglesBoard {
   });
 
   protected readonly previewTile = computed(() => {
-    const r = this.preview();
-    return r && inset(r);
+    const p = this.preview();
+    return p && { ...inset(p.rect), blocked: p.blocked };
   });
 
-  /** Label showing the size of the rectangle being drawn, e.g. "3 × 2". */
+  /** Label showing the size of the rectangle being drawn, e.g. "3 × 2", or that Lock blocks it. */
   protected readonly sizeLabel = computed(() => {
-    const r = this.preview();
-    return r && placeLabel(`${r.w} × ${r.h}`, r, this.state());
+    const p = this.preview();
+    if (!p) return null;
+    const text = p.blocked ? 'Locked' : `${p.rect.w} × ${p.rect.h}`;
+    return { ...placeLabel(text, p.rect, this.state()), blocked: p.blocked };
   });
 
   /** A tutorial note about the hinted rectangle, e.g. "4 cells, not 3". */
@@ -124,15 +128,17 @@ export class RectanglesBoard {
   protected onPointerMove(event: PointerEvent): void {
     if (!this.drag) return;
     this.drag.moveTo(this.cellUnder(event));
-    if (this.drag.isRectangle) this.preview.set(this.drag.rect);
+    if (this.drag.isRectangle) {
+      this.preview.set({ rect: this.drag.rect, blocked: this.drag.isBlocked(this.state(), this.locked()) });
+    }
   }
 
   protected onPointerUp(event: PointerEvent): void {
     if (!this.drag) return;
     this.drag.moveTo(this.cellUnder(event));
-    const move = this.drag.finish();
+    const move = this.drag.finish(this.state(), this.locked());
     this.cancelDrag();
-    this.move.emit(move);
+    if (move) this.move.emit(move);
   }
 
   protected cancelDrag(): void {

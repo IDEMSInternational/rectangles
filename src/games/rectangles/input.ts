@@ -1,5 +1,6 @@
 import { Point, Rect, Size } from './geometry';
 import { RectanglesMove } from './moves';
+import { RectanglesState, rectsOverlap } from './state';
 
 /** The cell under a position given in cells (e.g. 2.4, 0.9), clamped to the board. */
 export function cellAt(size: Size, cellX: number, cellY: number): Point {
@@ -46,8 +47,18 @@ export class RectanglesDrag {
     return this.moved;
   }
 
-  /** The move this touch makes when released. */
-  finish(): RectanglesMove {
+  /**
+   * Whether drawing this rectangle is blocked: with `locked` on, a new
+   * rectangle may not replace rectangles already drawn (they must be
+   * removed first), so careless drags can't wipe out earlier work.
+   */
+  isBlocked(state: RectanglesState, locked: boolean): boolean {
+    return locked && this.moved && state.rects.some((r) => rectsOverlap(r, this.rect));
+  }
+
+  /** The move this touch makes when released, or null if it's blocked. */
+  finish(state: RectanglesState, locked = false): RectanglesMove | null {
+    if (this.isBlocked(state, locked)) return null;
     return this.moved ? { kind: 'draw', rect: this.rect } : { kind: 'erase', rect: this.rect };
   }
 }
