@@ -19,11 +19,7 @@
   }
 
   @for (t of tiles(); track $index) {
-    <rect
-      class="tile"
-      [style.--fill]="'var(--rect-tile-' + t.colour + ')'"
-      [style.--edge]="'var(--rect-tile-' + t.colour + '-edge)'"
-      [attr.x]="t.x" [attr.y]="t.y" [attr.width]="t.w" [attr.height]="t.h" rx="0.2" />
+    <rect class="tile" [attr.x]="t.x" [attr.y]="t.y" [attr.width]="t.w" [attr.height]="t.h" rx="0.2" />
   }
 
   @if (hintView(); as h) {

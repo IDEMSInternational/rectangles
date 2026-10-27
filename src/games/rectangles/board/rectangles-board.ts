@@ -14,7 +14,6 @@ import { RectanglesDrag, cellAt } from '../input';
 import { RectanglesMove } from '../moves';
 import { RectanglesState } from '../state';
 import { RectanglesHint } from '../tutorial';
-import { TileColours } from './tile-colours';
 
 interface Segment {
   x1: number;
@@ -25,8 +24,6 @@ interface Segment {
 
 /** Gap (in cells) between a drawn rectangle and the cell lines around it. */
 const INSET = 0.07;
-/** Number of tile colours defined in rectangles-board.scss (--rect-tile-0 ... -5). */
-const TILE_COLOURS = 6;
 
 /** Board for Rectangles, drawn as SVG in cell units. Emits moves; never changes state itself. */
 @Component({
@@ -61,18 +58,7 @@ export class RectanglesBoard {
     return lines;
   });
 
-  private readonly colours = new TileColours(TILE_COLOURS);
-  private coloursFor: Int32Array | null = null;
-
-  protected readonly tiles = computed(() => {
-    const { clues, rects } = this.state();
-    if (clues !== this.coloursFor) {
-      this.colours.reset(); // a new puzzle
-      this.coloursFor = clues;
-    }
-    const colours = this.colours.coloursFor(rects);
-    return rects.map((r, i) => ({ ...inset(r), colour: colours[i] }));
-  });
+  protected readonly tiles = computed(() => this.state().rects.map(inset));
 
   protected readonly clues = computed(() => {
     const { w, clues } = this.state();
