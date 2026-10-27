@@ -22,6 +22,36 @@ describe('App', () => {
     expect(element.querySelector('puzzle-splash img')?.getAttribute('src')).toBe('studio/idems-games-logo.jpg');
   });
 
+  it('has a ☰ menu with the studio pages, each "coming soon" for now', async () => {
+    localStorage.setItem('rectangles.tutorialSeen', '1'); // straight to the game
+    const fixture = TestBed.createComponent(App);
+    await fixture.whenStable();
+    const element = fixture.nativeElement as HTMLElement;
+
+    (element.querySelector('puzzle-menu .opener') as HTMLButtonElement).click();
+    await fixture.whenStable();
+    const items = Array.from(element.querySelectorAll('puzzle-menu nav button'), (b) => b.textContent!.trim());
+    expect(items).toEqual([
+      'Announcements',
+      'Acknowledgements',
+      'About IDEMS Games',
+      'Other IDEMS Games',
+      'Terms and Conditions',
+    ]);
+
+    (element.querySelectorAll('puzzle-menu nav button')[2] as HTMLButtonElement).click();
+    await fixture.whenStable();
+    expect(element.querySelector('puzzle-menu h2')?.textContent).toBe('About IDEMS Games');
+    expect(element.querySelector('puzzle-menu .soon')?.textContent).toContain('Coming soon');
+
+    element.querySelector('puzzle-menu .panel')!.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+    await fixture.whenStable();
+    expect(element.querySelector('puzzle-menu nav')).toBeTruthy(); // back to the list
+    element.querySelector('puzzle-menu .panel')!.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+    await fixture.whenStable();
+    expect(element.querySelector('puzzle-menu .panel')).toBeNull(); // closed
+  });
+
   it('starts in the size played last time, and remembers new choices', () => {
     localStorage.setItem('rectangles.size', '5x8');
     const session = sessionOf(TestBed.createComponent(App).componentInstance);
