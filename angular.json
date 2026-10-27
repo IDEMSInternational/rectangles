@@ -27,6 +27,11 @@
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": "**/*",
+                "input": "games-common-core/assets",
+                "output": "studio"
               }
             ],
             "styles": [

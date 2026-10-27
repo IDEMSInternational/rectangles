@@ -19,6 +19,7 @@ describe('App', () => {
     expect(element.querySelector('h1')?.textContent).toContain('Rectangles');
     expect(element.querySelector('rectangles-board svg')).toBeTruthy();
     expect(element.querySelectorAll('.clue').length).toBeGreaterThan(0);
+    expect(element.querySelector('puzzle-splash img')?.getAttribute('src')).toBe('studio/idems-games-logo.jpg');
   });
 
   it('starts in the size played last time, and remembers new choices', () => {

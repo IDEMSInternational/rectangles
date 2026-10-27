@@ -1,3 +1,5 @@
+<puzzle-splash />
+
 @if (tutorial(); as t) {
   <puzzle-tutorial [controls]="t" (skip)="endTutorial()">
     <rectangles-board [state]="t.state()" [hint]="t.hint()" (move)="t.move($event)" />
