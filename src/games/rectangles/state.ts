@@ -16,23 +16,28 @@ export function rectsOverlap(a: Rect, b: Rect): boolean {
 }
 
 /**
- * True when the drawn rectangles cover the whole grid and each contains
- * exactly one number, equal to its area. Only the finished puzzle is
- * judged: individual rectangles are never marked right or wrong.
+ * True if a drawn rectangle breaks the rules: it holds no number, more
+ * than one number, or a number different from its area. ("Show mistakes"
+ * marks these. A rectangle that obeys the rules may still not be where
+ * the solution puts it; that isn't flagged.)
+ */
+export function breaksRules(state: Size & { clues: Int32Array }, r: Rect): boolean {
+  let clues = 0;
+  let value = 0;
+  state.clues.forEach((n, i) => {
+    if (n && rectContains(r, i % state.w, Math.floor(i / state.w))) {
+      clues++;
+      value = n;
+    }
+  });
+  return clues !== 1 || value !== r.w * r.h;
+}
+
+/**
+ * True when the drawn rectangles cover the whole grid and none breaks the
+ * rules.
  */
 export function isSolved(state: Size & { clues: Int32Array; rects: readonly Rect[] }): boolean {
   const covered = state.rects.reduce((sum, r) => sum + r.w * r.h, 0);
-  if (covered !== state.w * state.h) return false;
-
-  return state.rects.every((r) => {
-    let clues = 0;
-    let value = 0;
-    state.clues.forEach((n, i) => {
-      if (n && rectContains(r, i % state.w, Math.floor(i / state.w))) {
-        clues++;
-        value = n;
-      }
-    });
-    return clues === 1 && value === r.w * r.h;
-  });
+  return covered === state.w * state.h && !state.rects.some((r) => breaksRules(state, r));
 }

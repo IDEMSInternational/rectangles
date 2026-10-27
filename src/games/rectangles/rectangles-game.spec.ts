@@ -3,9 +3,28 @@ import { RectanglesDrag, cellAt } from './input';
 import { decodeParams } from './params';
 import { rectanglesGame as game } from './rectangles-game';
 import { encodeEdges, rectsToEdges } from './solution';
+import { breaksRules } from './state';
 import reference from './testing/reference-puzzles.json';
+import { rectanglesTutorial } from './tutorial';
 
 const uniquePuzzles = reference.filter((ref) => !ref.params.endsWith('a'));
+
+describe('Rectangles mistakes', () => {
+  // The tutorial puzzle: 3s at the top corners, a 4 and a 2 in row 2, a 4 bottom-left.
+  const state = game.newGame(rectanglesTutorial.params, rectanglesTutorial.description);
+
+  it('flags rectangles with no number, two numbers, or the wrong area', () => {
+    expect(breaksRules(state, { x: 0, y: 0, w: 3, h: 1 })).toBe(false); // a 3 with 3 cells
+    expect(breaksRules(state, { x: 0, y: 0, w: 2, h: 2 })).toBe(true); // a 3 with 4 cells
+    expect(breaksRules(state, { x: 1, y: 0, w: 2, h: 1 })).toBe(true); // no number
+    expect(breaksRules(state, { x: 0, y: 0, w: 4, h: 1 })).toBe(true); // two numbers
+  });
+
+  it('does not flag a rule-abiding rectangle that is not in the solution', () => {
+    expect(breaksRules(state, { x: 1, y: 1, w: 1, h: 3 })).toBe(true); // holds the 4: 3 cells
+    expect(breaksRules(state, { x: 1, y: 0, w: 1, h: 4 })).toBe(false); // the 4 as a column: legal, not the answer
+  });
+});
 
 describe('Rectangles solver', () => {
   it('solves every unique reference puzzle without the stored solution', () => {

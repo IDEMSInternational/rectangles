@@ -12,7 +12,7 @@ import { placeLabel } from '@studio/container/board-label';
 import { Rect } from '../geometry';
 import { RectanglesDrag, cellAt } from '../input';
 import { RectanglesMove } from '../moves';
-import { RectanglesState } from '../state';
+import { RectanglesState, breaksRules } from '../state';
 import { RectanglesHint } from '../tutorial';
 
 interface Segment {
@@ -38,6 +38,8 @@ export class RectanglesBoard {
   readonly hint = input<RectanglesHint | null>(null);
   /** Lock: new rectangles may not be drawn over existing ones. */
   readonly locked = input(false);
+  /** Show mistakes: rule-breaking rectangles are drawn in red. */
+  readonly showMistakes = input(false);
   readonly move = output<RectanglesMove>();
 
   private readonly svg = viewChild.required<ElementRef<SVGSVGElement>>('svg');
@@ -58,7 +60,11 @@ export class RectanglesBoard {
     return lines;
   });
 
-  protected readonly tiles = computed(() => this.state().rects.map(inset));
+  protected readonly tiles = computed(() => {
+    const state = this.state();
+    const showMistakes = this.showMistakes();
+    return state.rects.map((r) => ({ ...inset(r), wrong: showMistakes && breaksRules(state, r) }));
+  });
 
   protected readonly clues = computed(() => {
     const { w, clues } = this.state();

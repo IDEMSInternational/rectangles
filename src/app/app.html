@@ -4,14 +4,18 @@
   </puzzle-tutorial>
 } @else {
   <puzzle-shell [controls]="session" (help)="startTutorial()">
-    <rectangles-board [state]="session.state()" [locked]="locked()" (move)="session.move($event)" />
+    <rectangles-board
+      [state]="session.state()"
+      [locked]="locked()"
+      [showMistakes]="session.showMistakes()"
+      (move)="session.move($event)" />
 
     <puzzle-switch
       puzzleTools
       [(checked)]="locked"
       description="New rectangles can't be drawn over existing ones; tap a rectangle to remove it first"
     >
-      Lock
+      Lock rectangles
     </puzzle-switch>
   </puzzle-shell>
 }

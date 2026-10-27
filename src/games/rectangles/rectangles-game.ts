@@ -49,6 +49,7 @@ export const rectanglesGame: PuzzleGame<RectanglesParams, RectanglesState, Recta
 
   applyMove,
   isCompleted: (state) => state.completed,
+  canShowMistakes: true,
 
   solve(initial, solution) {
     if (solution) {
