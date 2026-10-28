@@ -79,6 +79,14 @@ describe('App', () => {
     expect(others).toContain('Angular: Copyright (c) 2010-2026 Google LLC.');
     expect(others).toContain('AndroidX libraries: The Android Open Source Project.');
     expect(others).toContain('END OF TERMS AND CONDITIONS'); // the whole Apache License
+    const accordions = Array.from(element.querySelectorAll('puzzle-menu details'), (d) => [
+      d.querySelector('summary')!.textContent!.trim(),
+      (d as HTMLDetailsElement).open,
+    ]);
+    expect(accordions).toEqual([
+      ['Other open-source software', false],
+      ['Apache License', false],
+    ]);
 
     element.querySelector('puzzle-menu .panel')!.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
     await fixture.whenStable();
