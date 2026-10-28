@@ -75,6 +75,10 @@ describe('App', () => {
     expect(inline.href).toBe('https://www.chiark.greenend.org.uk/~sgtatham/puzzles/');
     expect(licence).toContain('This software is copyright (c) 2004-2024 Simon Tatham.');
     expect(licence).toContain('THE SOFTWARE IS PROVIDED "AS IS"');
+    const others = element.querySelector('puzzle-menu .page')?.textContent;
+    expect(others).toContain('Angular: Copyright (c) 2010-2026 Google LLC.');
+    expect(others).toContain('AndroidX libraries: The Android Open Source Project.');
+    expect(others).toContain('END OF TERMS AND CONDITIONS'); // the whole Apache License
 
     element.querySelector('puzzle-menu .panel')!.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
     await fixture.whenStable();
