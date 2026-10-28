@@ -22,6 +22,28 @@ describe('App', () => {
     expect(element.querySelector('puzzle-splash img')?.getAttribute('src')).toBe('studio/idems-games-logo.jpg');
   });
 
+  it('shows the welcome notice on first launch only, with the terms and privacy policy', async () => {
+    let fixture = TestBed.createComponent(App);
+    await fixture.whenStable();
+    let element = fixture.nativeElement as HTMLElement;
+    expect(element.querySelector('puzzle-notice h2')?.textContent).toBe('Welcome to Rectangles');
+    const documents = Array.from(element.querySelectorAll('puzzle-notice summary'), (s) => s.textContent!.trim());
+    expect(documents).toEqual(['Terms and Conditions', 'Privacy Policy']);
+    expect(element.querySelector('puzzle-notice')?.textContent).toContain(
+      'The apps do not collect any personal information.',
+    );
+
+    (element.querySelector('puzzle-notice button') as HTMLButtonElement).click();
+    await fixture.whenStable();
+    expect(element.querySelector('puzzle-notice .notice')).toBeNull();
+
+    fixture.destroy();
+    fixture = TestBed.createComponent(App); // opening the app again
+    await fixture.whenStable();
+    element = fixture.nativeElement as HTMLElement;
+    expect(element.querySelector('puzzle-notice .notice')).toBeNull();
+  });
+
   it('has a ☰ menu with the studio pages, most "coming soon" for now', async () => {
     localStorage.setItem('rectangles.tutorialSeen', '1'); // straight to the game
     const fixture = TestBed.createComponent(App);
@@ -38,6 +60,7 @@ describe('App', () => {
       'Other IDEMS Games',
       'Licence',
       'Terms and Conditions',
+      'Privacy Policy',
     ]);
 
     (element.querySelectorAll('puzzle-menu nav button')[2] as HTMLButtonElement).click();
@@ -87,6 +110,13 @@ describe('App', () => {
       ['Other open-source software', false],
       ['Apache License', false],
     ]);
+
+    (element.querySelector('puzzle-menu header .icon') as HTMLButtonElement).click(); // back
+    await fixture.whenStable();
+    (element.querySelectorAll('puzzle-menu nav button')[6] as HTMLButtonElement).click();
+    await fixture.whenStable();
+    const headings = Array.from(element.querySelectorAll('puzzle-menu .page h3'), (h) => h.textContent);
+    expect(headings).toContain('Changes, including future research');
 
     element.querySelector('puzzle-menu .panel')!.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
     await fixture.whenStable();

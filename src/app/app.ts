@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { hasSeenTutorial, markTutorialSeen } from '@studio/container/first-run';
+import { PuzzleNotice } from '@studio/container/puzzle-notice/puzzle-notice';
 import { PuzzleShell } from '@studio/container/puzzle-shell/puzzle-shell';
 import { PuzzleSplash } from '@studio/container/puzzle-splash/puzzle-splash';
 import { PuzzleSwitch } from '@studio/container/puzzle-switch/puzzle-switch';
@@ -13,11 +14,12 @@ import { rectanglesTutorial } from '../games/rectangles/tutorial';
 
 @Component({
   selector: 'app-root',
-  imports: [PuzzleShell, PuzzleSplash, PuzzleSwitch, PuzzleTutorial, RectanglesBoard],
+  imports: [PuzzleNotice, PuzzleShell, PuzzleSplash, PuzzleSwitch, PuzzleTutorial, RectanglesBoard],
   templateUrl: './app.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App {
+  protected readonly game = rectanglesGame;
   protected readonly session = new SessionStore(rectanglesGame);
   /** Lock: rectangles can't be drawn over existing ones. Remembered on the device. */
   protected readonly locked = storedSetting(`${rectanglesGame.id}.lock`);

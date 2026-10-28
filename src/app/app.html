@@ -1,4 +1,5 @@
 <puzzle-splash />
+<puzzle-notice [game]="game" />
 
 @if (tutorial(); as t) {
   <puzzle-tutorial [controls]="t" (skip)="endTutorial()">
