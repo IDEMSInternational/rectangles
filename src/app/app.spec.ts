@@ -22,7 +22,7 @@ describe('App', () => {
     expect(element.querySelector('puzzle-splash img')?.getAttribute('src')).toBe('studio/idems-games-logo.jpg');
   });
 
-  it('has a ☰ menu with the studio pages, each "coming soon" for now', async () => {
+  it('has a ☰ menu with the studio pages, most "coming soon" for now', async () => {
     localStorage.setItem('rectangles.tutorialSeen', '1'); // straight to the game
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
@@ -43,6 +43,15 @@ describe('App', () => {
     await fixture.whenStable();
     expect(element.querySelector('puzzle-menu h2')?.textContent).toBe('About IDEMS Games');
     expect(element.querySelector('puzzle-menu .soon')?.textContent).toContain('Coming soon');
+
+    (element.querySelector('puzzle-menu header .icon') as HTMLButtonElement).click(); // back
+    await fixture.whenStable();
+    (element.querySelectorAll('puzzle-menu nav button')[1] as HTMLButtonElement).click();
+    await fixture.whenStable();
+    expect(element.querySelector('puzzle-menu .page')?.textContent).toContain("Simon Tatham's Portable Puzzle Collection");
+    const link = element.querySelector('puzzle-menu .link-card') as HTMLAnchorElement;
+    expect(link.href).toBe('https://www.chiark.greenend.org.uk/~sgtatham/puzzles/');
+    expect(link.textContent).toContain('chiark.greenend.org.uk/~sgtatham/puzzles');
 
     element.querySelector('puzzle-menu .panel')!.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
     await fixture.whenStable();
