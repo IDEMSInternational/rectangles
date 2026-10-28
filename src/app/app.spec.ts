@@ -52,6 +52,9 @@ describe('App', () => {
     const link = element.querySelector('puzzle-menu .link-card') as HTMLAnchorElement;
     expect(link.href).toBe('https://www.chiark.greenend.org.uk/~sgtatham/puzzles/');
     expect(link.textContent).toContain('chiark.greenend.org.uk/~sgtatham/puzzles');
+    const licence = element.querySelector('puzzle-menu .page section')?.textContent;
+    expect(licence).toContain('This software is copyright (c) 2004-2024 Simon Tatham.');
+    expect(licence).toContain('THE SOFTWARE IS PROVIDED "AS IS"');
 
     element.querySelector('puzzle-menu .panel')!.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
     await fixture.whenStable();
