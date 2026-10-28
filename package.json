@@ -10,7 +10,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "apk": "node tools/build-apk.mjs",
-    "app-images": "capacitor-assets generate --android --assetPath games-common-core/assets/app --iconBackgroundColor #f6f3ed --iconBackgroundColorDark #f6f3ed --splashBackgroundColor #f6f3ed --splashBackgroundColorDark #f6f3ed"
+    "app-images": "capacitor-assets generate --android --assetPath assets/app --iconBackgroundColor #fffdf8 --iconBackgroundColorDark #fffdf8 --splashBackgroundColor #f6f3ed --splashBackgroundColorDark #f6f3ed"
   },
   "private": true,
   "packageManager": "npm@11.6.2",
