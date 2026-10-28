@@ -68,6 +68,11 @@ describe('App', () => {
     ]);
     const licence = element.querySelector('puzzle-menu .page section blockquote')?.textContent;
     expect(licence).toContain('Copyright (c) 2026 IDEMS International.');
+    expect(licence).toContain(
+      "Parts of this software are ports of Simon Tatham's Portable Puzzle Collection, which carries this notice:",
+    );
+    const inline = element.querySelector('puzzle-menu .page section blockquote a') as HTMLAnchorElement;
+    expect(inline.href).toBe('https://www.chiark.greenend.org.uk/~sgtatham/puzzles/');
     expect(licence).toContain('This software is copyright (c) 2004-2024 Simon Tatham.');
     expect(licence).toContain('THE SOFTWARE IS PROVIDED "AS IS"');
 
