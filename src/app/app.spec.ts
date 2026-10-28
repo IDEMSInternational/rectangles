@@ -30,7 +30,7 @@ describe('App', () => {
     const documents = Array.from(element.querySelectorAll('puzzle-notice summary'), (s) => s.textContent!.trim());
     expect(documents).toEqual(['Terms and Conditions', 'Privacy Policy']);
     expect(element.querySelector('puzzle-notice')?.textContent).toContain(
-      'The apps do not collect any personal information.',
+      'At the moment, the apps do not collect any personal information.',
     );
 
     (element.querySelector('puzzle-notice button') as HTMLButtonElement).click();
