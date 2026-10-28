@@ -36,6 +36,7 @@ describe('App', () => {
       'Acknowledgements',
       'About IDEMS Games',
       'Other IDEMS Games',
+      'Licence',
       'Terms and Conditions',
     ]);
 
@@ -52,10 +53,21 @@ describe('App', () => {
     const link = element.querySelector('puzzle-menu .link-card') as HTMLAnchorElement;
     expect(link.href).toBe('https://www.chiark.greenend.org.uk/~sgtatham/puzzles/');
     expect(link.textContent).toContain('chiark.greenend.org.uk/~sgtatham/puzzles');
-    expect(element.querySelector('puzzle-menu .page section')?.textContent).toContain(
-      'This game is © 2026 IDEMS International.',
+
+    (element.querySelector('puzzle-menu header .icon') as HTMLButtonElement).click(); // back
+    await fixture.whenStable();
+    (element.querySelectorAll('puzzle-menu nav button')[4] as HTMLButtonElement).click();
+    await fixture.whenStable();
+    expect(element.querySelector('puzzle-menu .page')?.textContent).toContain(
+      'Rectangles is © 2026 IDEMS International, and it is open source.',
     );
+    const repos = Array.from(element.querySelectorAll<HTMLAnchorElement>('puzzle-menu .link-card'), (a) => a.href);
+    expect(repos).toEqual([
+      'https://github.com/IDEMSInternational/rectangles',
+      'https://github.com/IDEMSInternational/games-common-core',
+    ]);
     const licence = element.querySelector('puzzle-menu .page section blockquote')?.textContent;
+    expect(licence).toContain('Copyright (c) 2026 IDEMS International.');
     expect(licence).toContain('This software is copyright (c) 2004-2024 Simon Tatham.');
     expect(licence).toContain('THE SOFTWARE IS PROVIDED "AS IS"');
 
