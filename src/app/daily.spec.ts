@@ -62,19 +62,12 @@ describe('Home page and daily puzzles', () => {
     expect(text('h1')).toBe('Rectangles');
     expect(text('puzzle-home .what')).toBe('#5 · Friday · 9×9');
     expect(text('puzzle-home .status')).toBe('Not played yet');
-    const week = Array.from(element.querySelectorAll('.week li'), (li) => {
+    // The last 7 days, from Saturday: puzzle #1 was on Monday.
+    const days = Array.from(element.querySelectorAll('.days li'), (li) => {
       const button = li.querySelector('button');
-      return button ? `${button.className.trim()}${button.disabled ? ' disabled' : ''}` : 'none';
+      return button ? `${button.textContent!.trim()} ${button.className.trim()}` : 'none';
     });
-    expect(week).toEqual([
-      'new',
-      'new',
-      'new',
-      'new',
-      'new today',
-      'future disabled',
-      'future disabled',
-    ]);
+    expect(days).toEqual(['none', 'none', 'M new', 'T new', 'W new', 'T new', 'F new today']);
     expect(element.querySelector('rectangles-board')).toBeNull();
   });
 
@@ -185,7 +178,7 @@ describe('Home page and daily puzzles', () => {
     expect(text('.clock')).toBe('Solved in 3:12');
   });
 
-  it('lets earlier days this week be played, without sharing or the streak', async () => {
+  it('lets the last 7 days be played, without sharing or the streak', async () => {
     screens.openDaily('2026-10-27');
     await fixture.whenStable();
     expect(text('h1')).toBe('Daily puzzle #2');
@@ -199,14 +192,23 @@ describe('Home page and daily puzzles', () => {
     expect(element.querySelector('.daily-bar button')).toBeNull(); // no Share
     expect(text('.daily-bar .shared')).toContain("doesn't count for your streak");
     await goHome();
-    expect(element.querySelector('.week li:nth-child(2) button')?.className).toContain('late');
+    expect(element.querySelector('.days li:nth-child(4) button')?.className).toContain('late');
     expect(element.querySelector('.streak')).toBeNull();
   });
 
-  it("can't open days still to come", async () => {
+  it("can't open days still to come, or more than 7 days ago", async () => {
     screens.openDaily('2026-10-31');
     await fixture.whenStable();
     expect(element.querySelector('puzzle-home')).toBeTruthy();
+
+    vi.setSystemTime(new Date(2026, 10, 2, 9, 0)); // the next Monday
+    await open();
+    screens.openDaily('2026-10-26');
+    await fixture.whenStable();
+    expect(element.querySelector('puzzle-home')).toBeTruthy();
+    expect(element.querySelector('.days button')?.getAttribute('aria-label')).toBe(
+      'Tuesday, puzzle #2: Not played yet',
+    );
   });
 
   it('moves on to the next puzzle at midnight', async () => {
