@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { SessionStore } from '@studio/container/session-store';
+import { version } from '../../package.json';
 import { App } from './app';
 
 describe('App', () => {
@@ -62,6 +63,7 @@ describe('App', () => {
       'Terms and Conditions',
       'Privacy Policy',
     ]);
+    expect(element.querySelector('puzzle-menu .version')?.textContent).toBe(`Rectangles version ${version}`);
 
     (element.querySelectorAll('puzzle-menu nav button')[2] as HTMLButtonElement).click();
     await fixture.whenStable();

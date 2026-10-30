@@ -12,6 +12,8 @@ import { RectanglesBoard } from '../games/rectangles/board/rectangles-board';
 import { rectanglesGame } from '../games/rectangles/rectangles-game';
 import { rectanglesTutorial } from '../games/rectangles/tutorial';
 
+import { version } from '../../package.json';
+
 @Component({
   selector: 'app-root',
   imports: [PuzzleNotice, PuzzleShell, PuzzleSplash, PuzzleSwitch, PuzzleTutorial, RectanglesBoard],
@@ -20,6 +22,7 @@ import { rectanglesTutorial } from '../games/rectangles/tutorial';
 })
 export class App {
   protected readonly game = rectanglesGame;
+  protected readonly version = version;
   protected readonly session = new SessionStore(rectanglesGame);
   /** Lock: rectangles can't be drawn over existing ones. Remembered on the device. */
   protected readonly locked = storedSetting(`${rectanglesGame.id}.lock`);

@@ -6,7 +6,7 @@
     <rectangles-board [state]="t.state()" [hint]="t.hint()" (move)="t.move($event)" />
   </puzzle-tutorial>
 } @else {
-  <puzzle-shell [controls]="session" (help)="startTutorial()">
+  <puzzle-shell [controls]="session" [version]="version" (help)="startTutorial()">
     <rectangles-board
       [state]="session.state()"
       [locked]="locked()"

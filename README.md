@@ -50,6 +50,24 @@ npm test -- --watch=false
 git commit -am "Update games-common-core"
 ```
 
+## Releasing
+
+The version lives in `package.json` only, as major.minor.patch (patch for
+fixes, minor for new features, major for big changes). The menu shows it, and
+the Android build reads it: `versionName` is the same text, and `versionCode`
+(which must go up with every store upload) is major × 1,000,000 + minor × 1,000
++ patch, so 1.2.3 is 1002003. Each game has its own version.
+
+To release, bump the version (this commits and tags it, e.g. `v1.0.1`), push
+with the tag, then build:
+
+```sh
+npm version patch      # or minor / major
+git push --follow-tags
+```
+
+For the first release, tag the current version instead: `git tag v1.0.0`.
+
 ## Layout
 
 ```

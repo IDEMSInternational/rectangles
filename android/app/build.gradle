@@ -1,5 +1,11 @@
 apply plugin: 'com.android.application'
 
+// The version is set in package.json ("npm version"). versionName is that
+// "1.2.3"; versionCode, which the stores need to go up with every release,
+// is 1002003 (major × 1,000,000 + minor × 1,000 + patch).
+def appVersion = new groovy.json.JsonSlurper().parse(file('../../package.json')).version
+def (major, minor, patch) = appVersion.tokenize('.')*.toInteger()
+
 android {
     namespace = "international.idems.rectangles"
     compileSdk = rootProject.ext.compileSdkVersion
@@ -7,8 +13,8 @@ android {
         applicationId "international.idems.rectangles"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode major * 1000000 + minor * 1000 + patch
+        versionName appVersion
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
