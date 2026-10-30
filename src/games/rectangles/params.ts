@@ -46,7 +46,7 @@ export function customParams(values: Readonly<Record<string, number>>): Rectangl
  * everyone (see daily.ts in the engine).
  */
 export const daily: DailySchedule<RectanglesParams> = {
-  firstDay: '2026-10-26',
+  firstDay: '2026-10-24',
   week: [8, 8, 9, 9, 9, 10, 10].map((n) => ({ w: n, h: n, expandFactor: 0, unique: true })),
 };
 

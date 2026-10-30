@@ -14,7 +14,7 @@ describe('Home page and daily puzzles', () => {
   let screens: Screens;
   let element: HTMLElement;
 
-  /** Friday 30 October 2026, 10am: daily puzzle #5, 9×9. */
+  /** Friday 30 October 2026, 10am: daily puzzle #7, 9×9. */
   const FRIDAY = new Date(2026, 9, 30, 10, 0);
 
   beforeEach(async () => {
@@ -60,14 +60,14 @@ describe('Home page and daily puzzles', () => {
 
   it("opens on the home page, with today's daily puzzle and free play", () => {
     expect(text('h1')).toBe('Rectangles');
-    expect(text('puzzle-home .what')).toBe('#5 · Friday · 9×9');
+    expect(text('puzzle-home .what')).toBe('#7 · Friday · 9×9');
     expect(text('puzzle-home .status')).toBe('Not played yet');
-    // The last 7 days, from Saturday: puzzle #1 was on Monday.
+    // The last 7 days, from Saturday, the day of puzzle #1.
     const days = Array.from(element.querySelectorAll('.days li'), (li) => {
       const button = li.querySelector('button');
       return button ? `${button.textContent!.trim()} ${button.className.trim()}` : 'none';
     });
-    expect(days).toEqual(['none', 'none', 'M new', 'T new', 'W new', 'T new', 'F new today']);
+    expect(days).toEqual(['S new', 'S new', 'M new', 'T new', 'W new', 'T new', 'F new today']);
     expect(element.querySelector('rectangles-board')).toBeNull();
   });
 
@@ -85,7 +85,7 @@ describe('Home page and daily puzzles', () => {
   it('plays the daily puzzle against a clock that starts at the first touch', async () => {
     screens.openDaily('2026-10-30');
     await fixture.whenStable();
-    expect(text('h1')).toBe('Daily puzzle #5');
+    expect(text('h1')).toBe('Daily puzzle #7');
     expect(text('.daily-bar span')).toBe('Friday · 9×9');
     const buttons = Array.from(element.querySelectorAll('.action-bar button'), (b) =>
       b.textContent!.trim(),
@@ -162,7 +162,7 @@ describe('Home page and daily puzzles', () => {
     (element.querySelector('.daily-bar button') as HTMLButtonElement).click();
     await vi.waitFor(() => expect(text('.daily-bar .shared')).toBe('Copied, ready to paste'));
     expect(writeText).toHaveBeenCalledWith(
-      'Rectangles daily puzzle #5 (Friday, 9×9)\nSolved in 3:12\n🔥 2-day streak',
+      'Rectangles daily puzzle #7 (Friday, 9×9)\nSolved in 3:12\n🔥 2-day streak',
     );
 
     await goHome();
@@ -181,7 +181,7 @@ describe('Home page and daily puzzles', () => {
   it('lets the last 7 days be played, without sharing or the streak', async () => {
     screens.openDaily('2026-10-27');
     await fixture.whenStable();
-    expect(text('h1')).toBe('Daily puzzle #2');
+    expect(text('h1')).toBe('Daily puzzle #4');
     expect(text('.daily-bar span')).toBe('Tuesday · 8×8');
     screens.daily()!.touch();
     later(100);
@@ -207,13 +207,13 @@ describe('Home page and daily puzzles', () => {
     await fixture.whenStable();
     expect(element.querySelector('puzzle-home')).toBeTruthy();
     expect(element.querySelector('.days button')?.getAttribute('aria-label')).toBe(
-      'Tuesday, puzzle #2: Not played yet',
+      'Tuesday, puzzle #4: Not played yet',
     );
   });
 
   it('moves on to the next puzzle at midnight', async () => {
     vi.setSystemTime(new Date(2026, 9, 31, 0, 1));
     await open();
-    expect(text('puzzle-home .what')).toBe('#6 · Saturday · 10×10');
+    expect(text('puzzle-home .what')).toBe('#8 · Saturday · 10×10');
   });
 });

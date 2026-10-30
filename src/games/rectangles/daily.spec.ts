@@ -17,7 +17,7 @@ describe('Rectangles daily puzzles', () => {
     expect(`${rectanglesGame.encodeParams(session.params)}:${session.description}`).toBe(expected);
   });
 
-  it('numbers the puzzles from launch week', () => {
-    expect(dailyPuzzle('rectangles', rectanglesGame.daily!, '2026-10-26')?.number).toBe(1);
+  it('numbers the puzzles from launch day, Saturday 24 October 2026', () => {
+    expect(dailyPuzzle('rectangles', rectanglesGame.daily!, '2026-10-24')?.number).toBe(1);
   });
 });
