@@ -7,6 +7,7 @@ import {
   RectanglesParams,
   customFields,
   customParams,
+  daily,
   decodeParams,
   defaultParams,
   encodeParams,
@@ -50,6 +51,7 @@ export const rectanglesGame: PuzzleGame<RectanglesParams, RectanglesState, Recta
   applyMove,
   isCompleted: (state) => state.completed,
   canShowMistakes: true,
+  daily,
 
   solve(initial, solution) {
     if (solution) {

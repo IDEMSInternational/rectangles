@@ -1,3 +1,4 @@
+import { DailySchedule } from '@studio/engine/daily';
 import { CustomField, Preset } from '@studio/engine/puzzle-game';
 
 /** Smallest and largest grid sides offered to players. */
@@ -38,6 +39,16 @@ export function customFields(params: RectanglesParams): CustomField[] {
 export function customParams(values: Readonly<Record<string, number>>): RectanglesParams {
   return { ...defaultParams(), w: values['w'], h: values['h'] };
 }
+
+/**
+ * The daily puzzles: 8×8 on Monday and Tuesday, 9×9 Wednesday to Friday,
+ * 10×10 at the weekend. Changing this changes the daily puzzles for
+ * everyone (see daily.ts in the engine).
+ */
+export const daily: DailySchedule<RectanglesParams> = {
+  firstDay: '2026-10-26',
+  week: [8, 8, 9, 9, 9, 10, 10].map((n) => ({ w: n, h: n, expandFactor: 0, unique: true })),
+};
 
 /** Text form, compatible with the original: "7x7", "10x10e0.5", "9x9a". */
 export function encodeParams(params: RectanglesParams): string {

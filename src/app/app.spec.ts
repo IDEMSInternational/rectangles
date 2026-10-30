@@ -6,12 +6,14 @@ import { App } from './app';
 describe('App', () => {
   beforeEach(async () => {
     localStorage.clear();
+    history.replaceState(null, ''); // the home page
     await TestBed.configureTestingModule({
       imports: [App],
     }).compileComponents();
   });
 
-  const sessionOf = (app: App) => (app as unknown as { session: SessionStore<unknown, unknown, unknown> }).session;
+  const sessionOf = (app: App) =>
+    (app as unknown as { screens: { session: SessionStore<unknown, unknown, unknown> } }).screens.session;
 
   it('renders a Rectangles board inside the puzzle shell', async () => {
     const fixture = TestBed.createComponent(App);
@@ -46,7 +48,7 @@ describe('App', () => {
   });
 
   it('has a ☰ menu with the studio pages, most "coming soon" for now', async () => {
-    localStorage.setItem('rectangles.tutorialSeen', '1'); // straight to the game
+    localStorage.setItem('rectangles.tutorialSeen', '1'); // straight to the home page
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
     const element = fixture.nativeElement as HTMLElement;

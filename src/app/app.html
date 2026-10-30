@@ -1,17 +1,18 @@
 <puzzle-splash />
 <puzzle-notice [game]="game" />
 
-@if (tutorial(); as t) {
-  <puzzle-tutorial [controls]="t" (skip)="endTutorial()">
+@let s = screens;
+@if (s.tutorial(); as t) {
+  <puzzle-tutorial [controls]="t" (skip)="s.endTutorial()">
     <rectangles-board [state]="t.state()" [hint]="t.hint()" (move)="t.move($event)" />
   </puzzle-tutorial>
-} @else {
-  <puzzle-shell [controls]="session" [version]="version" (help)="startTutorial()">
+} @else if (s.play(); as play) {
+  <puzzle-shell [controls]="play" (back)="s.goHome()" (help)="s.startTutorial()">
     <rectangles-board
-      [state]="session.state()"
+      [state]="play.state()"
       [locked]="locked()"
-      [showMistakes]="session.showMistakes()"
-      (move)="session.move($event)" />
+      [showMistakes]="play.showMistakes()"
+      (move)="play.move($event)" />
 
     <puzzle-switch
       puzzleTools
@@ -21,4 +22,6 @@
       Lock rectangles
     </puzzle-switch>
   </puzzle-shell>
+} @else {
+  <puzzle-home [controls]="s" />
 }
