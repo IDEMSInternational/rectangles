@@ -66,7 +66,9 @@ npm version patch      # or minor / major
 git push --follow-tags
 ```
 
-For the first release, tag the current version instead: `git tag v1.0.0`.
+While in beta the version stays below 1.0.0 (0.1.0, 0.2.0, ...); 1.0.0 is the
+first full public release. For the first release, tag the current version
+instead: `git tag v0.1.0`.
 
 ## Layout
 
