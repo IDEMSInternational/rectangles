@@ -55,7 +55,7 @@ describe('Beat the clock', () => {
 
   it('is chosen on the home page, with a time limit', async () => {
     const cards = Array.from(element.querySelectorAll('puzzle-home h2'), (h) => h.textContent);
-    expect(cards).toEqual(['Daily puzzles', 'Beat the clock', 'Free play']);
+    expect(cards).toEqual(['Daily puzzles', 'Beat the clock', 'Free play', 'Timed play']);
 
     (element.querySelectorAll('puzzle-home .card button.primary')[1] as HTMLButtonElement).click();
     await fixture.whenStable();
