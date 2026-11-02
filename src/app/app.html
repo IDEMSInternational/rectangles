@@ -1,27 +1,30 @@
-<puzzle-splash />
-<puzzle-notice [game]="game" />
+<!-- Laid out for a 393 x 852 screen, scaled to fit this one (see PuzzleStage). -->
+<puzzle-stage>
+  <puzzle-splash />
+  <puzzle-notice [game]="game" />
 
-@let s = screens;
-@if (s.tutorial(); as t) {
-  <puzzle-tutorial [controls]="t" (skip)="s.endTutorial()">
-    <rectangles-board [state]="t.state()" [hint]="t.hint()" (move)="t.move($event)" />
-  </puzzle-tutorial>
-} @else if (s.play(); as play) {
-  <puzzle-shell [controls]="play" (back)="s.goHome()" (help)="s.startTutorial()">
-    <rectangles-board
-      [state]="play.state()"
-      [locked]="locked()"
-      [showMistakes]="play.showMistakes()"
-      (move)="play.move($event)" />
+  @let s = screens;
+  @if (s.tutorial(); as t) {
+    <puzzle-tutorial [controls]="t" (skip)="s.endTutorial()">
+      <rectangles-board [state]="t.state()" [hint]="t.hint()" (move)="t.move($event)" />
+    </puzzle-tutorial>
+  } @else if (s.play(); as play) {
+    <puzzle-shell [controls]="play" (back)="s.goHome()" (help)="s.startTutorial()">
+      <rectangles-board
+        [state]="play.state()"
+        [locked]="locked()"
+        [showMistakes]="play.showMistakes()"
+        (move)="play.move($event)" />
 
-    <puzzle-switch
-      puzzleTools
-      [(checked)]="locked"
-      description="New rectangles can't be drawn over existing ones; tap a rectangle to remove it first"
-    >
-      Lock rectangles
-    </puzzle-switch>
-  </puzzle-shell>
-} @else {
-  <puzzle-home [controls]="s" />
-}
+      <puzzle-switch
+        puzzleTools
+        [(checked)]="locked"
+        description="New rectangles can't be drawn over existing ones; tap a rectangle to remove it first"
+      >
+        Lock rectangles
+      </puzzle-switch>
+    </puzzle-shell>
+  } @else {
+    <puzzle-home [controls]="s" />
+  }
+</puzzle-stage>
