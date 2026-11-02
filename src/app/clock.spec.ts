@@ -116,7 +116,7 @@ describe('Beat the clock', () => {
     await goHome();
     const left = JSON.parse(localStorage.getItem('rectangles.clock.run')!).bag as number[];
     expect(left.length).toBe(0); // the second set is used up
-  });
+  }, 15_000); // five real pauses between puzzles
 
   it('picks medium puzzles at random', async () => {
     screens.openClock(5, true);
