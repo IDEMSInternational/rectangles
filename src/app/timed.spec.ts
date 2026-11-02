@@ -57,9 +57,9 @@ describe('Timed play', () => {
 
   it('is the last mode on the home page, with the size menu and no Solve', async () => {
     const cards = Array.from(element.querySelectorAll('puzzle-home h2'), (h) => h.textContent);
-    expect(cards).toEqual(['Daily puzzles', 'Beat the clock', 'Free play', 'Timed play']);
+    expect(cards).toEqual(['Daily puzzles', 'Beat the clock', 'Timed play', 'Free play']);
 
-    (element.querySelectorAll('puzzle-home .card button.primary')[3] as HTMLButtonElement).click();
+    (element.querySelectorAll('puzzle-home .card button.primary')[2] as HTMLButtonElement).click();
     await fixture.whenStable();
     expect(text('h1')).toBe('Timed play');
     expect(element.querySelector('puzzle-shell select')).toBeTruthy();
@@ -87,12 +87,20 @@ describe('Timed play', () => {
     expect(text('.mode-bar .shared')).toBe('A new best time for 7×7!');
     expect(timed().canUndo()).toBe(false); // the solved board stays
 
+    // No share panel in the test browser: the text is copied instead.
+    const writeText = vi.fn(() => Promise.resolve());
+    Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true });
+    (element.querySelector('.mode-bar button') as HTMLButtonElement).click(); // Share
+    await vi.waitFor(() => expect(writeText).toHaveBeenCalled());
+    expect(writeText).toHaveBeenCalledWith('Rectangles, timed play: 7×7 solved in 1:05, a new best time!');
+
     timed().newGame(); // the clock starts again
     await fixture.whenStable();
     expect(timed().elapsed()).toBe(0);
     expect(text('.mode-bar span')).toBe('Best: 1:05');
     await solveIn(80);
     expect(text('.mode-bar .shared')).toBe('Your best time: 1:05');
+    expect(element.querySelector('.mode-bar button')).toBeNull(); // nothing to share
 
     timed().newGame();
     await solveIn(50);
@@ -132,7 +140,7 @@ describe('Timed play', () => {
     const shown: string[] = [];
     for (let i = 0; i < 3; i++) {
       await goHome();
-      shown.push(text('puzzle-home .card:nth-of-type(4) .status')!);
+      shown.push(text('puzzle-home .card:nth-of-type(3) .status')!);
       screens.openTimed();
       await fixture.whenStable();
     }

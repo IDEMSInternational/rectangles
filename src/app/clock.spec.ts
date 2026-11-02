@@ -55,7 +55,7 @@ describe('Beat the clock', () => {
 
   it('is chosen on the home page, with a time limit', async () => {
     const cards = Array.from(element.querySelectorAll('puzzle-home h2'), (h) => h.textContent);
-    expect(cards).toEqual(['Daily puzzles', 'Beat the clock', 'Free play', 'Timed play']);
+    expect(cards).toEqual(['Daily puzzles', 'Beat the clock', 'Timed play', 'Free play']);
 
     (element.querySelectorAll('puzzle-home .card button.primary')[1] as HTMLButtonElement).click();
     await fixture.whenStable();
@@ -74,7 +74,7 @@ describe('Beat the clock', () => {
     const buttons = Array.from(element.querySelectorAll('.action-bar button'), (b) =>
       b.textContent!.trim(),
     );
-    expect(buttons).toEqual(['Undo', 'Redo', 'Restart', 'Skip']);
+    expect(buttons).toEqual(['Undo', 'Redo', 'Restart']); // no Solve, no skipping
   });
 
   it('counts down from the first touch, and stops between puzzles', async () => {
@@ -105,10 +105,9 @@ describe('Beat the clock', () => {
     const sizes = new Set<string>();
     for (let i = 0; i < 30; i++) {
       sizes.add(clock().label());
-      clock().skip();
+      clock().playAgain();
     }
     expect([...sizes].sort()).toEqual(['6×6', '7×7', '8×8']);
-    expect(clock().solved()).toBe(0); // skipped puzzles don't count
   });
 
   it('keeps the record for each time limit when the time is up', async () => {
@@ -126,6 +125,15 @@ describe('Beat the clock', () => {
     expect(text('.mode-bar .shared')).toBe('A new record for 5 minutes!');
     expect(clock().canUndo()).toBe(false);
 
+    // No share panel in the test browser: the text is copied instead.
+    const writeText = vi.fn(() => Promise.resolve());
+    Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true });
+    (element.querySelector('.mode-bar .row button') as HTMLButtonElement).click(); // Share
+    await vi.waitFor(() => expect(writeText).toHaveBeenCalled());
+    expect(writeText).toHaveBeenCalledWith(
+      'Rectangles, Beat the clock: 1 puzzle solved in 5 minutes, a new record!',
+    );
+
     (element.querySelector('.mode-bar button') as HTMLButtonElement).click(); // Play again
     await fixture.whenStable();
     expect(clock().solved()).toBe(0);
@@ -134,6 +142,16 @@ describe('Beat the clock', () => {
 
     await goHome();
     expect(text('puzzle-home .card:nth-of-type(2) .status')).toBe('Your record for 5 min: 1 puzzle');
+
+    // Not a new record: nothing to share.
+    screens.openClock(5, true);
+    await fixture.whenStable();
+    clock().touch();
+    later(301);
+    await wait(400);
+    await fixture.whenStable();
+    expect(text('.mode-bar .shared')).toBe('Your record for 5 minutes: 1');
+    expect(element.querySelectorAll('.mode-bar button').length).toBe(1); // Play again
   });
 
   it('shows one record at a time, the next each time the home page opens', async () => {
