@@ -10,6 +10,12 @@
   --rect-tile-edge: #5e9a57;
 }
 
+/* The dark theme: the same green, deep and soft, with a lighter edge. */
+:host-context([data-theme='dark']) {
+  --rect-tile: #2c4630;
+  --rect-tile-edge: #7fc178;
+}
+
 .tile {
   fill: var(--rect-tile);
   stroke: var(--rect-tile-edge);
