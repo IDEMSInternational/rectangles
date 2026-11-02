@@ -133,7 +133,24 @@ describe('Beat the clock', () => {
     expect(clock().record).toBe(1);
 
     await goHome();
-    expect(text('puzzle-home .card:nth-of-type(2) .status')).toBe('Records: 5 min: 1');
+    expect(text('puzzle-home .card:nth-of-type(2) .status')).toBe('Your record for 5 min: 1 puzzle');
+  });
+
+  it('shows one record at a time, the next each time the home page opens', async () => {
+    localStorage.setItem('rectangles.clock.records', JSON.stringify({ 5: 3, 10: 7, 25: 12 }));
+    const shown: string[] = [];
+    for (let i = 0; i < 4; i++) {
+      screens.openFreePlay();
+      await goHome();
+      shown.push(text('puzzle-home .card:nth-of-type(2) .status')!);
+    }
+    expect(shown).toEqual([
+      'Your record for 25 min: 12 puzzles',
+      'Your record for 5 min: 3 puzzles',
+      'Your record for 10 min: 7 puzzles',
+      'Your record for 25 min: 12 puzzles',
+    ]);
+    expect(element.querySelectorAll('puzzle-home .card:nth-of-type(2) .status').length).toBe(1);
   });
 
   it('can be continued later, or started again', async () => {
