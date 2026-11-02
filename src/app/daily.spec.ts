@@ -206,10 +206,17 @@ describe('Home page and daily puzzles', () => {
 
     await goHome();
     expect(text('puzzle-home .status')).toBe('Easy: solved in 3:12');
-    // Hard's streak is still on: today's Hard puzzle can still be solved.
-    const streaks = () =>
-      Array.from(element.querySelectorAll('.streaks li'), (li) => li.textContent!.trim());
-    expect(streaks()).toEqual(['🔥 Easy: 2 days', '🔥 Hard: 1 day']);
+    // One streak at a time, the next each time the home page opens. Hard's
+    // is still on: today's Hard puzzle can still be solved.
+    const shown = [text('.streak')];
+    for (let i = 0; i < 2; i++) {
+      screens.openFreePlay();
+      await goHome();
+      shown.push(text('.streak'));
+    }
+    expect(shown[0]).not.toBe(shown[1]);
+    expect(new Set(shown)).toEqual(new Set(['🔥 Easy: 2 days', '🔥 Hard: 1 day']));
+    expect(element.querySelectorAll('.streak').length).toBe(1);
     const friday = element.querySelector('.days li:nth-child(7) button') as HTMLElement;
     expect(friday.className).toContain('solved');
     expect(friday.getAttribute('style')).toMatch(/var\(--brand\) 0(deg)? 120deg, var\(--surface\) 120deg 240deg/); // Easy's third
@@ -225,7 +232,7 @@ describe('Home page and daily puzzles', () => {
     vi.setSystemTime(new Date(2026, 10, 3, 9, 0));
     history.replaceState(null, '');
     await open();
-    expect(streaks()).toEqual([]);
+    expect(element.querySelector('.streak')).toBeNull();
   });
 
   it('lets the last 7 days be played, without sharing or the streak', async () => {
@@ -248,7 +255,7 @@ describe('Home page and daily puzzles', () => {
     expect(tuesday.getAttribute('style')).toMatch(
       /var\(--surface\) 240deg 360deg\) padding-box, .*var\(--brand\) 240deg 360deg\) border-box/,
     );
-    expect(element.querySelector('.streaks')).toBeNull();
+    expect(element.querySelector('.streak')).toBeNull();
   });
 
   it("can't open days still to come, or more than 7 days ago", async () => {
