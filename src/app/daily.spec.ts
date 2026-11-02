@@ -14,7 +14,7 @@ describe('Home page and daily puzzles', () => {
   let screens: Screens;
   let element: HTMLElement;
 
-  /** Friday 30 October 2026, 10am: daily puzzle #7 (Low 6×6, Medium 7×7, High 10×10). */
+  /** Friday 30 October 2026, 10am: daily puzzle #7 (Easy 6×6, Medium 7×7, Hard 10×10). */
   const FRIDAY = new Date(2026, 9, 30, 10, 0);
 
   beforeEach(async () => {
@@ -79,9 +79,9 @@ describe('Home page and daily puzzles', () => {
       Array.from(b.querySelectorAll('span'), (span) => span.textContent!.trim()).join(' / '),
     );
     expect(levels).toEqual([
-      'Low / 6×6 / not played yet',
+      'Easy / 6×6 / not played yet',
       'Medium / 7×7 / not played yet',
-      'High / 10×10 / not played yet',
+      'Hard / 10×10 / not played yet',
     ]);
 
     (element.querySelector('.chooser .cancel') as HTMLButtonElement).click();
@@ -112,7 +112,7 @@ describe('Home page and daily puzzles', () => {
     screens.openDaily('2026-10-30', 2);
     await fixture.whenStable();
     expect(text('h1')).toBe('Daily puzzle #7');
-    expect(text('.daily-bar span')).toBe('Friday · High · 10×10');
+    expect(text('.daily-bar span')).toBe('Friday · Hard · 10×10');
     const buttons = Array.from(element.querySelectorAll('.action-bar button'), (b) =>
       b.textContent!.trim(),
     );
@@ -140,7 +140,7 @@ describe('Home page and daily puzzles', () => {
     later(20);
 
     await goHome(); // the clock stops
-    expect(text('puzzle-home .status')).toBe('Low: 0:20 so far');
+    expect(text('puzzle-home .status')).toBe('Easy: 0:20 so far');
     later(600);
     screens.openDaily('2026-10-30', 0);
     await fixture.whenStable();
@@ -165,11 +165,11 @@ describe('Home page and daily puzzles', () => {
     // Closing the app there, and opening it again (on the home page).
     history.replaceState(null, '');
     await open();
-    expect(text('puzzle-home .status')).toBe('Low: 0:21 so far · Medium: 0:05 so far');
+    expect(text('puzzle-home .status')).toBe('Easy: 0:21 so far · Medium: 0:05 so far');
   });
 
   it('keeps the time of a solved puzzle, the streaks, and shares the result', async () => {
-    // Thursday's solved on the day, at the Low and High levels.
+    // Thursday's solved on the day, at the Easy and Hard levels.
     localStorage.setItem(
       'rectangles.daily.results',
       JSON.stringify({
@@ -199,18 +199,18 @@ describe('Home page and daily puzzles', () => {
     (element.querySelector('.daily-bar button') as HTMLButtonElement).click();
     await vi.waitFor(() => expect(text('.daily-bar .shared')).toBe('Copied, ready to paste'));
     expect(writeText).toHaveBeenCalledWith(
-      'Rectangles daily puzzle #7, Low (Friday, 6×6)\nSolved in 3:12\n🔥 2-day streak at Low',
+      'Rectangles daily puzzle #7, Easy (Friday, 6×6)\nSolved in 3:12\n🔥 2-day streak at Easy',
     );
 
     await goHome();
-    expect(text('puzzle-home .status')).toBe('Low: solved in 3:12');
-    // High's streak is still on: today's High puzzle can still be solved.
+    expect(text('puzzle-home .status')).toBe('Easy: solved in 3:12');
+    // Hard's streak is still on: today's Hard puzzle can still be solved.
     const streaks = () =>
       Array.from(element.querySelectorAll('.streaks li'), (li) => li.textContent!.trim());
-    expect(streaks()).toEqual(['🔥 Low: 2 days', '🔥 High: 1 day']);
+    expect(streaks()).toEqual(['🔥 Easy: 2 days', '🔥 Hard: 1 day']);
     const friday = element.querySelector('.days li:nth-child(7) button') as HTMLElement;
     expect(friday.className).toContain('solved');
-    expect(friday.getAttribute('style')).toMatch(/var\(--brand\) 3deg 120deg.*var\(--surface\) 123deg 240deg/); // Low's third
+    expect(friday.getAttribute('style')).toMatch(/var\(--brand\) 0(deg)? 120deg, var\(--surface\) 120deg 240deg/); // Easy's third
 
     // Opened again: the finished board, still solved.
     await open();
@@ -230,7 +230,7 @@ describe('Home page and daily puzzles', () => {
     screens.openDaily('2026-10-27', 2);
     await fixture.whenStable();
     expect(text('h1')).toBe('Daily puzzle #4');
-    expect(text('.daily-bar span')).toBe('Tuesday · High · 9×9');
+    expect(text('.daily-bar span')).toBe('Tuesday · Hard · 9×9');
     screens.daily()!.touch();
     later(100);
     solveDaily();

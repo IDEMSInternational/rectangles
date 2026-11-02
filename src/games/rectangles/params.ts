@@ -41,8 +41,8 @@ export function customParams(values: Readonly<Record<string, number>>): Rectangl
 }
 
 /**
- * The daily puzzles, at each level growing through the week: Low 5×5 to
- * 7×7, Medium 6×6 to 8×8, High 9×9 and 10×10. Changing this changes the
+ * The daily puzzles, at each level growing through the week: Easy 5×5 to
+ * 7×7, Medium 6×6 to 8×8, Hard 9×9 and 10×10. Changing this changes the
  * daily puzzles for everyone (see daily.ts in the engine).
  */
 export const daily: DailySchedule<RectanglesParams> = {
