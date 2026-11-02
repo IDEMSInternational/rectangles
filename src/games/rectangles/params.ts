@@ -41,13 +41,17 @@ export function customParams(values: Readonly<Record<string, number>>): Rectangl
 }
 
 /**
- * The daily puzzles: 8×8 on Monday and Tuesday, 9×9 Wednesday to Friday,
- * 10×10 at the weekend. Changing this changes the daily puzzles for
- * everyone (see daily.ts in the engine).
+ * The daily puzzles, at each level growing through the week: Low 5×5 to
+ * 7×7, Medium 6×6 to 8×8, High 9×9 and 10×10. Changing this changes the
+ * daily puzzles for everyone (see daily.ts in the engine).
  */
 export const daily: DailySchedule<RectanglesParams> = {
   firstDay: '2026-10-24',
-  week: [8, 8, 9, 9, 9, 10, 10].map((n) => ({ w: n, h: n, expandFactor: 0, unique: true })),
+  levels: [
+    [5, 5, 6, 6, 6, 7, 7],
+    [6, 6, 7, 7, 7, 8, 8],
+    [9, 9, 9, 9, 10, 10, 10],
+  ].map((week) => week.map((n) => ({ w: n, h: n, expandFactor: 0, unique: true }))),
 };
 
 /** Text form, compatible with the original: "7x7", "10x10e0.5", "9x9a". */

@@ -7,17 +7,19 @@ describe('Rectangles daily puzzles', () => {
   // whatever the version. If this fails, the generator, the schedule or
   // the date rule has changed the daily puzzles.
   it.each([
-    ['2026-10-26', '8x8:f2b3_6_4a2f3d4e6d3b6e3b7b5a2b2a2d4'], // Monday
-    ['2026-10-28', '9x9:4a8l4a2d2f6a2_2i3f12b6_6a4a2a4_2h4c2_3_3e'], // Wednesday
-    ['2026-10-30', '9x9:a6c5e2a3n2c8a10_6c10j2c3a3e5d4_3b2c7e'], // Friday
-    ['2026-11-01', '10x10:c3g3b6b3a6_7_8d2h8c2a2b2j2a3d6a10e3a3f5d10b4h2c'], // Sunday
-  ])('%s is always %s', (date, expected) => {
-    const puzzle = dailyPuzzle('rectangles', rectanglesGame.daily!, date)!;
+    ['2026-11-02', 0, '5x5:2_2a3d2d2a3a3a3a3_2b'], // Monday, Low
+    ['2026-11-02', 1, '6x6:e3b6_4b2b4d5f4_2_2b4c'], // Monday, Medium
+    ['2026-11-02', 2, '9x9:a4f2_2g2j9a6c6f10d2b6_4a2_2b3_2f4a2a5e3b5c'], // Monday, High
+    ['2026-11-08', 0, '7x7:a3e2b3e6_2_4a3e4_2_2a5f3b2_2e6a'], // Sunday, Low
+    ['2026-11-08', 1, '8x8:5e2a4a3_8e5e3f4_2f5c2e3c3e6b9b'], // Sunday, Medium
+    ['2026-11-08', 2, '10x10:b9_2b12d4i4a2l3_5c12a4d14x12k5b2_3b7g'], // Sunday, High
+  ])('%s at level %i is always %s', (date, level, expected) => {
+    const puzzle = dailyPuzzle('rectangles', rectanglesGame.daily!, date, level)!;
     const session = new GameSession(rectanglesGame, puzzle.params, puzzle.seed);
     expect(`${rectanglesGame.encodeParams(session.params)}:${session.description}`).toBe(expected);
   });
 
   it('numbers the puzzles from launch day, Saturday 24 October 2026', () => {
-    expect(dailyPuzzle('rectangles', rectanglesGame.daily!, '2026-10-24')?.number).toBe(1);
+    expect(dailyPuzzle('rectangles', rectanglesGame.daily!, '2026-10-24', 0)?.number).toBe(1);
   });
 });
