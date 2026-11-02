@@ -99,6 +99,25 @@ describe('Beat the clock', () => {
     expect(clock().remaining()).toBe(230_000);
   });
 
+  it('deals the puzzles in fair sets: each size once per set, in random order', async () => {
+    screens.openClock(5, true);
+    await fixture.whenStable();
+    clock().touch();
+    const sizes = [clock().label()];
+    for (let i = 0; i < 5; i++) {
+      solve();
+      await wait(NEXT_PUZZLE_MS + 50);
+      sizes.push(clock().label());
+    }
+    expect(sizes.slice(0, 3).sort()).toEqual(['6×6', '7×7', '8×8']);
+    expect(sizes.slice(3, 6).sort()).toEqual(['6×6', '7×7', '8×8']);
+
+    // Continued later, the set carries on where it was.
+    await goHome();
+    const left = JSON.parse(localStorage.getItem('rectangles.clock.run')!).bag as number[];
+    expect(left.length).toBe(0); // the second set is used up
+  });
+
   it('picks medium puzzles at random', async () => {
     screens.openClock(5, true);
     await fixture.whenStable();
