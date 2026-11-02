@@ -54,6 +54,14 @@ export const daily: DailySchedule<RectanglesParams> = {
   ].map((week) => week.map((n) => ({ w: n, h: n, expandFactor: 0, unique: true }))),
 };
 
+/** Beat the clock: medium puzzles, the sizes of the Medium daily puzzles, picked at random. */
+export const beatTheClock: RectanglesParams[] = [6, 7, 8].map((n) => ({
+  w: n,
+  h: n,
+  expandFactor: 0,
+  unique: true,
+}));
+
 /** Text form, compatible with the original: "7x7", "10x10e0.5", "9x9a". */
 export function encodeParams(params: RectanglesParams): string {
   let text = `${params.w}x${params.h}`;

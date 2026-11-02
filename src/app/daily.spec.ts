@@ -94,7 +94,7 @@ describe('Home page and daily puzzles', () => {
     (element.querySelectorAll('.chooser .level')[1] as HTMLButtonElement).click();
     await fixture.whenStable();
     expect(text('h1')).toBe('Daily puzzle #4');
-    expect(text('.daily-bar span')).toBe('Tuesday · Medium · 6×6');
+    expect(text('.mode-bar span')).toBe('Tuesday · Medium · 6×6');
   });
 
   it('goes to free play and back, as browser history', async () => {
@@ -112,7 +112,7 @@ describe('Home page and daily puzzles', () => {
     screens.openDaily('2026-10-30', 2);
     await fixture.whenStable();
     expect(text('h1')).toBe('Daily puzzle #7');
-    expect(text('.daily-bar span')).toBe('Friday · Hard · 10×10');
+    expect(text('.mode-bar span')).toBe('Friday · Hard · 10×10');
     const buttons = Array.from(element.querySelectorAll('.action-bar button'), (b) =>
       b.textContent!.trim(),
     );
@@ -141,6 +141,8 @@ describe('Home page and daily puzzles', () => {
 
     await goHome(); // the clock stops
     expect(text('puzzle-home .status')).toBe('Easy: 0:20 so far');
+    // In progress: nothing shows on the day's circle.
+    expect(element.querySelector('.days li:nth-child(7) button')!.getAttribute('style')).not.toContain('--brand');
     later(600);
     screens.openDaily('2026-10-30', 0);
     await fixture.whenStable();
@@ -196,8 +198,8 @@ describe('Home page and daily puzzles', () => {
     // No share panel in the test browser: the text is copied instead.
     const writeText = vi.fn(() => Promise.resolve());
     Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true });
-    (element.querySelector('.daily-bar button') as HTMLButtonElement).click();
-    await vi.waitFor(() => expect(text('.daily-bar .shared')).toBe('Copied, ready to paste'));
+    (element.querySelector('.mode-bar button') as HTMLButtonElement).click();
+    await vi.waitFor(() => expect(text('.mode-bar .shared')).toBe('Copied, ready to paste'));
     expect(writeText).toHaveBeenCalledWith(
       'Rectangles daily puzzle #7, Easy (Friday, 6×6)\nSolved in 3:12\n🔥 2-day streak at Easy',
     );
@@ -230,15 +232,15 @@ describe('Home page and daily puzzles', () => {
     screens.openDaily('2026-10-27', 2);
     await fixture.whenStable();
     expect(text('h1')).toBe('Daily puzzle #4');
-    expect(text('.daily-bar span')).toBe('Tuesday · Hard · 9×9');
+    expect(text('.mode-bar span')).toBe('Tuesday · Hard · 9×9');
     screens.daily()!.touch();
     later(100);
     solveDaily();
     await fixture.whenStable();
 
     expect(screens.daily()!.result()).toEqual({ time: 100_000, onDay: false });
-    expect(element.querySelector('.daily-bar button')).toBeNull(); // no Share
-    expect(text('.daily-bar .shared')).toContain("doesn't count for your streak");
+    expect(element.querySelector('.mode-bar button')).toBeNull(); // no Share
+    expect(text('.mode-bar .shared')).toContain("doesn't count for your streak");
     await goHome();
     const tuesday = element.querySelector('.days li:nth-child(4) button') as HTMLElement;
     expect(tuesday.className).toContain('late');
