@@ -240,7 +240,12 @@ describe('Home page and daily puzzles', () => {
     expect(element.querySelector('.daily-bar button')).toBeNull(); // no Share
     expect(text('.daily-bar .shared')).toContain("doesn't count for your streak");
     await goHome();
-    expect(element.querySelector('.days li:nth-child(4) button')?.className).toContain('late');
+    const tuesday = element.querySelector('.days li:nth-child(4) button') as HTMLElement;
+    expect(tuesday.className).toContain('late');
+    // Hard's third: not filled, but its edge is orange.
+    expect(tuesday.getAttribute('style')).toMatch(
+      /var\(--surface\) 240deg 360deg\) padding-box, .*var\(--brand\) 240deg 360deg\) border-box/,
+    );
     expect(element.querySelector('.streaks')).toBeNull();
   });
 
