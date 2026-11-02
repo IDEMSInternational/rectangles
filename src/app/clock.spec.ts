@@ -55,7 +55,7 @@ describe('Beat the clock', () => {
 
   it('is chosen on the home page, with a time limit', async () => {
     const cards = Array.from(element.querySelectorAll('puzzle-home h2'), (h) => h.textContent);
-    expect(cards).toEqual(['Daily puzzles', 'Beat the clock', 'Timed play', 'Free play']);
+    expect(cards).toEqual(['Daily puzzles', 'Beat the clock', 'Timed play']);
 
     (element.querySelectorAll('puzzle-home .card button.primary')[1] as HTMLButtonElement).click();
     await fixture.whenStable();
@@ -158,7 +158,7 @@ describe('Beat the clock', () => {
     localStorage.setItem('rectangles.clock.records', JSON.stringify({ 5: 3, 10: 7, 25: 12 }));
     const shown: string[] = [];
     for (let i = 0; i < 4; i++) {
-      screens.openFreePlay();
+      screens.openTimed();
       await goHome();
       shown.push(text('puzzle-home .card:nth-of-type(2) .status')!);
     }

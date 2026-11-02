@@ -57,7 +57,7 @@ describe('Timed play', () => {
 
   it('is the last mode on the home page, with the size menu and no Solve', async () => {
     const cards = Array.from(element.querySelectorAll('puzzle-home h2'), (h) => h.textContent);
-    expect(cards).toEqual(['Daily puzzles', 'Beat the clock', 'Timed play', 'Free play']);
+    expect(cards).toEqual(['Daily puzzles', 'Beat the clock', 'Timed play']);
 
     (element.querySelectorAll('puzzle-home .card button.primary')[2] as HTMLButtonElement).click();
     await fixture.whenStable();
@@ -111,14 +111,13 @@ describe('Timed play', () => {
     expect(text('.mode-bar span')).toBe('No best time yet');
   });
 
-  it('keeps its own puzzle apart from free play, and continues after a reload', async () => {
+  it('continues the puzzle in progress after a reload', async () => {
     screens.openTimed();
     await fixture.whenStable();
     timed().newGame(1); // 5×5
     timed().touch();
     later(30);
     expect(timed().label()).toBe('5×5');
-    expect(screens.session.label()).toBe('7×7'); // free play's, unchanged
 
     await goHome(); // the clock stops
     later(600);

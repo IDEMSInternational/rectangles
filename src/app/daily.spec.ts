@@ -97,12 +97,10 @@ describe('Home page and daily puzzles', () => {
     expect(text('.mode-bar span')).toBe('Tuesday · Medium · 6×6');
   });
 
-  it('goes to free play and back, as browser history', async () => {
-    screens.openFreePlay();
+  it('goes to a game and back, as browser history', async () => {
+    screens.openTimed();
     await fixture.whenStable();
-    expect(text('h1')).toBe('Rectangles');
-    expect(element.querySelector('puzzle-shell select')).toBeTruthy();
-    expect(element.querySelectorAll('.action-bar button').length).toBe(4); // with Solve
+    expect(text('h1')).toBe('Timed play');
 
     await goHome();
     expect(element.querySelector('puzzle-home')).toBeTruthy();
@@ -210,7 +208,7 @@ describe('Home page and daily puzzles', () => {
     // is still on: today's Hard puzzle can still be solved.
     const shown = [text('.streak')];
     for (let i = 0; i < 2; i++) {
-      screens.openFreePlay();
+      screens.openTimed();
       await goHome();
       shown.push(text('.streak'));
     }

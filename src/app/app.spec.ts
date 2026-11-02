@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { SessionStore } from '@studio/container/session-store';
 import { version } from '../../package.json';
+import { rectanglesGame } from '../games/rectangles/rectangles-game';
 import { App } from './app';
 
 describe('App', () => {
@@ -12,8 +13,8 @@ describe('App', () => {
     }).compileComponents();
   });
 
-  const sessionOf = (app: App) =>
-    (app as unknown as { screens: { session: SessionStore<unknown, unknown, unknown> } }).screens.session;
+  /** A puzzle session as timed play keeps it (opening the app again: another one). */
+  const newSession = () => TestBed.runInInjectionContext(() => new SessionStore(rectanglesGame));
 
   it('renders a Rectangles board inside the puzzle shell', async () => {
     const fixture = TestBed.createComponent(App);
@@ -132,7 +133,7 @@ describe('App', () => {
 
   it('starts in the size played last time, and remembers new choices', () => {
     localStorage.setItem('rectangles.size', '5x8');
-    const session = sessionOf(TestBed.createComponent(App).componentInstance);
+    const session = newSession();
     expect(session.gameId()).toMatch(/^5x8#/);
 
     session.newGame(5); // the 9×9 preset
@@ -140,17 +141,13 @@ describe('App', () => {
   });
 
   it('continues the game in progress after a reload, undo history included', () => {
-    const first = sessionOf(TestBed.createComponent(App).componentInstance) as SessionStore<
-      unknown,
-      { rects: unknown[] },
-      { kind: 'draw'; rect: { x: number; y: number; w: number; h: number } }
-    >;
+    const first = newSession();
     first.move({ kind: 'draw', rect: { x: 0, y: 0, w: 2, h: 1 } });
     first.move({ kind: 'draw', rect: { x: 3, y: 3, w: 1, h: 2 } });
     first.undo();
 
     // "Reopen the app": a new component reads what the first one saved.
-    const second = sessionOf(TestBed.createComponent(App).componentInstance) as typeof first;
+    const second = newSession();
     expect(second.gameId()).toBe(first.gameId());
     expect(second.state().rects).toEqual([{ x: 0, y: 0, w: 2, h: 1 }]);
     expect(second.canRedo()).toBe(true);
@@ -159,13 +156,13 @@ describe('App', () => {
   });
 
   it('forgets a finished puzzle, keeping only its size, so a reload starts a new one', () => {
-    const first = sessionOf(TestBed.createComponent(App).componentInstance);
+    const first = newSession();
     first.newGame(1); // 5×5
     first.solve();
     expect(first.completed()).toBe(true);
     expect(localStorage.getItem('rectangles.game')).toBeNull();
 
-    const second = sessionOf(TestBed.createComponent(App).componentInstance);
+    const second = newSession();
     expect(second.gameId()).toMatch(/^5x5#/);
     expect(second.gameId()).not.toBe(first.gameId());
     expect(second.completed()).toBe(false);
@@ -174,23 +171,19 @@ describe('App', () => {
 
   it('starts a new puzzle if the saved game is unreadable', () => {
     localStorage.setItem('rectangles.game', '{"params":"7x7","moves":[{"kind":"nonsense"}],"position":1}');
-    const session = sessionOf(TestBed.createComponent(App).componentInstance);
+    const session = newSession();
     expect(session.gameId()).toMatch(/^7x7#\d+$/);
     expect(session.canUndo()).toBe(false);
   });
 
   it('ignores a remembered size that is no longer valid', () => {
     localStorage.setItem('rectangles.size', '0x0');
-    const session = sessionOf(TestBed.createComponent(App).componentInstance);
+    const session = newSession();
     expect(session.gameId()).toMatch(/^7x7#/);
   });
 
   it('celebrates a puzzle the player solves, but not one solved with Solve', () => {
-    const session = sessionOf(TestBed.createComponent(App).componentInstance) as SessionStore<
-      unknown,
-      { rects: unknown[] },
-      { kind: 'solve'; rects: unknown[] }
-    >;
+    const session = newSession();
 
     // With the Solve button: solved, but no celebration.
     session.solve();
