@@ -6,7 +6,6 @@ import { RectanglesMove, applyMove } from './moves';
 import {
   RectanglesParams,
   customFields,
-  beatTheClock,
   customParams,
   daily,
   decodeParams,
@@ -53,7 +52,6 @@ export const rectanglesGame: PuzzleGame<RectanglesParams, RectanglesState, Recta
   isCompleted: (state) => state.completed,
   canShowMistakes: true,
   daily,
-  beatTheClock,
 
   solve(initial, solution) {
     if (solution) {
