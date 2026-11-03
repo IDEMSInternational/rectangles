@@ -19,7 +19,7 @@
       <puzzle-switch
         puzzleTools
         [(checked)]="locked"
-        description="New rectangles can't be drawn over existing ones; tap a rectangle to remove it first"
+        [description]="lockDescription"
       >
         Lock rectangles
       </puzzle-switch>

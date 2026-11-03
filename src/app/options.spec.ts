@@ -53,7 +53,9 @@ describe('Game options', () => {
     expect(text('puzzle-menu h2')).toBe('Game options');
     expect(Array.from(element.querySelectorAll('puzzle-menu .options h3'), (h) => h.textContent)).toEqual([
       'Appearance',
+      'Playing',
       'Daily puzzles',
+      'Your progress',
     ]);
     expect(text('puzzle-menu .options puzzle-switch')).toBe('Dark theme');
     (element.querySelector('puzzle-menu .options puzzle-switch input') as HTMLInputElement).click();
@@ -67,6 +69,70 @@ describe('Game options', () => {
       'Hard',
     ]);
     expect(boxes().map((box) => box.checked)).toEqual([true, true, true]);
+  });
+
+  it("has the game's settings for playing, the same ones as on the game screens", async () => {
+    await openOptions();
+    const switches = () => Array.from(element.querySelectorAll<HTMLElement>('puzzle-menu .setting'));
+    expect(switches().map((s) => s.querySelector('puzzle-switch')!.textContent!.trim())).toEqual([
+      'Show mistakes',
+      'Lock rectangles',
+    ]);
+    expect(switches()[0].querySelector('.hint')!.textContent).toBe('Rule-breaking pieces are shown in red');
+
+    (switches()[0].querySelector('input') as HTMLInputElement).click(); // Show mistakes
+    (switches()[1].querySelector('input') as HTMLInputElement).click(); // Lock
+    await fixture.whenStable();
+    // One setting for every mode.
+    expect(screens.session.showMistakes()).toBe(true);
+    expect(screens.timed.showMistakes()).toBe(true);
+    expect((fixture.componentInstance as unknown as { locked(): boolean }).locked()).toBe(true);
+
+    screens.openTimed();
+    await fixture.whenStable();
+    const onScreen = Array.from(element.querySelectorAll('puzzle-shell puzzle-switch input'), (i) => [
+      i.parentElement!.textContent!.trim(),
+      (i as HTMLInputElement).checked,
+    ]);
+    expect(onScreen).toEqual([
+      ['Lock rectangles', true],
+      ['Show mistakes', true],
+    ]);
+  });
+
+  it('resets the records, after asking, keeping the settings', async () => {
+    localStorage.setItem('rectangles.daily.results', JSON.stringify({ '2026-10-30.low': { time: 60_000, onDay: true } }));
+    localStorage.setItem('rectangles.clock.records', JSON.stringify({ 'medium/5': 4 }));
+    localStorage.setItem('rectangles.ladder.best', JSON.stringify({ 0: 300_000 }));
+    localStorage.setItem('rectangles.timed.best', JSON.stringify({ '7x7': { label: '7×7', time: 50_000 } }));
+    localStorage.setItem('rectangles.daily.levels', JSON.stringify([true, false, true]));
+    await open();
+    expect(text('.streak')).toBe('🔥 Easy: 1 day');
+
+    await openOptions();
+    const reset = () => element.querySelector('puzzle-menu .reset') as HTMLButtonElement;
+    expect(reset().textContent!.trim()).toBe('Reset my records…');
+    reset().click();
+    await fixture.whenStable();
+    expect(text('puzzle-menu .options [role=alert]')).toContain("It can't be undone.");
+    (element.querySelector('puzzle-menu .confirm button:last-child') as HTMLButtonElement).click(); // Cancel
+    await fixture.whenStable();
+    expect(localStorage.getItem('rectangles.clock.records')).not.toBeNull();
+
+    reset().click();
+    await fixture.whenStable();
+    (element.querySelector('puzzle-menu .confirm .danger') as HTMLButtonElement).click();
+    await fixture.whenStable();
+    expect(text('puzzle-menu .options [role=status]')).toBe('Your records have been deleted.');
+    for (const key of ['daily.results', 'clock.records', 'ladder.best', 'timed.best']) {
+      expect(localStorage.getItem(`rectangles.${key}`)).toBeNull();
+    }
+    expect(localStorage.getItem('rectangles.daily.levels')).toBe('[true,false,true]'); // a setting
+    expect(element.querySelector('.streak')).toBeNull();
+    expect(text('puzzle-home .status')).toBe('Not played yet');
+    expect(screens.clockRecord()).toBeNull();
+    expect(screens.ladderBest()).toBeNull();
+    expect(screens.timedBest()).toBeNull();
   });
 
   it('plays only the levels ticked: the chooser, the circles and the streaks follow', async () => {

@@ -14,6 +14,8 @@ import { rectanglesTutorial } from '../games/rectangles/tutorial';
 
 import { version } from '../../package.json';
 
+const LOCK_DESCRIPTION = "New rectangles can't be drawn over existing ones; tap a rectangle to remove it first";
+
 @Component({
   selector: 'app-root',
   imports: [PuzzleHome, PuzzleNotice, PuzzleShell, PuzzleStage, PuzzleSplash, PuzzleSwitch, PuzzleTutorial, RectanglesBoard],
@@ -22,8 +24,11 @@ import { version } from '../../package.json';
 })
 export class App {
   protected readonly game = rectanglesGame;
-  /** Home page, daily puzzles, Beat the clock, timed play and the tutorial. */
-  protected readonly screens = new PuzzleScreens(rectanglesGame, rectanglesTutorial, version);
+  protected readonly lockDescription = LOCK_DESCRIPTION;
   /** Lock: rectangles can't be drawn over existing ones. Remembered on the device. */
   protected readonly locked = storedSetting(`${rectanglesGame.id}.lock`);
+  /** Home page, daily puzzles, the challenges, free play and the tutorial; Lock in Game options. */
+  protected readonly screens = new PuzzleScreens(rectanglesGame, rectanglesTutorial, version, {
+    switches: [{ label: 'Lock rectangles', description: LOCK_DESCRIPTION, checked: this.locked }],
+  });
 }
