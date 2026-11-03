@@ -53,11 +53,10 @@ describe('Beat the clock', () => {
     await fixture.whenStable();
   }
 
-  it('is chosen on the home page, with a time limit', async () => {
-    const cards = Array.from(element.querySelectorAll('puzzle-home h2'), (h) => h.textContent);
-    expect(cards).toEqual(['Daily puzzles', 'Beat the clock', 'Timed play']);
-
-    (element.querySelectorAll('puzzle-home .card button.primary')[1] as HTMLButtonElement).click();
+  it('is chosen in Challenges, with a time limit', async () => {
+    (element.querySelectorAll('puzzle-home .card button.primary')[2] as HTMLButtonElement).click(); // Challenges
+    await fixture.whenStable();
+    (element.querySelectorAll('puzzle-home .card button.primary')[0] as HTMLButtonElement).click();
     await fixture.whenStable();
     const times = Array.from(element.querySelectorAll('.chooser .times button'), (b) =>
       b.textContent!.trim(),
@@ -160,7 +159,10 @@ describe('Beat the clock', () => {
     expect(clock().record).toBe(1);
 
     await goHome();
-    expect(text('puzzle-home .card:nth-of-type(2) .status')).toBe('Your record for 5 min: 1 puzzle');
+    screens.openChallenges();
+    await fixture.whenStable();
+    expect(text('puzzle-home .card:nth-of-type(1) .status')).toBe('Your record for 5 min: 1 puzzle');
+    await goHome();
 
     // Not a new record: nothing to share.
     screens.openClock(5, true);
@@ -173,21 +175,24 @@ describe('Beat the clock', () => {
     expect(element.querySelectorAll('.mode-bar button').length).toBe(1); // Play again
   });
 
-  it('shows one record at a time, the next each time the home page opens', async () => {
+  it('shows one record at a time, the next each time Challenges opens', async () => {
     localStorage.setItem('rectangles.clock.records', JSON.stringify({ 5: 3, 10: 7, 25: 12 }));
     const shown: string[] = [];
     for (let i = 0; i < 4; i++) {
-      screens.openTimed();
+      screens.openChallenges();
+      await fixture.whenStable();
+      shown.push(text('puzzle-home .card:nth-of-type(1) .status')!);
       await goHome();
-      shown.push(text('puzzle-home .card:nth-of-type(2) .status')!);
     }
     expect(shown).toEqual([
+      'Your record for 10 min: 7 puzzles',
       'Your record for 25 min: 12 puzzles',
       'Your record for 5 min: 3 puzzles',
       'Your record for 10 min: 7 puzzles',
-      'Your record for 25 min: 12 puzzles',
     ]);
-    expect(element.querySelectorAll('puzzle-home .card:nth-of-type(2) .status').length).toBe(1);
+    screens.openChallenges();
+    await fixture.whenStable();
+    expect(element.querySelectorAll('puzzle-home .card:nth-of-type(1) .status').length).toBe(1);
   });
 
   it('can be continued later, or started again', async () => {
@@ -202,7 +207,9 @@ describe('Beat the clock', () => {
     // Closing the app, and opening it again.
     history.replaceState(null, '');
     await open();
-    (element.querySelectorAll('puzzle-home .card button.primary')[1] as HTMLButtonElement).click();
+    screens.openChallenges();
+    await fixture.whenStable();
+    (element.querySelectorAll('puzzle-home .card button.primary')[0] as HTMLButtonElement).click();
     await fixture.whenStable();
     expect(text('.chooser .level .state')).toBe('Solved: 1, 9:30 left');
     (element.querySelector('.chooser .level') as HTMLButtonElement).click(); // Continue

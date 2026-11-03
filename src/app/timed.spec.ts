@@ -55,11 +55,10 @@ describe('Timed play', () => {
     await fixture.whenStable();
   }
 
-  it('is the last mode on the home page, with the size menu and no Solve', async () => {
-    const cards = Array.from(element.querySelectorAll('puzzle-home h2'), (h) => h.textContent);
-    expect(cards).toEqual(['Daily puzzles', 'Beat the clock', 'Timed play']);
-
-    (element.querySelectorAll('puzzle-home .card button.primary')[2] as HTMLButtonElement).click();
+  it('is in Challenges, with the size menu and no Solve', async () => {
+    (element.querySelectorAll('puzzle-home .card button.primary')[2] as HTMLButtonElement).click(); // Challenges
+    await fixture.whenStable();
+    (element.querySelectorAll('puzzle-home .card button.primary')[1] as HTMLButtonElement).click();
     await fixture.whenStable();
     expect(text('h1')).toBe('Timed play');
     expect(element.querySelector('puzzle-shell select')).toBeTruthy();
@@ -129,7 +128,8 @@ describe('Timed play', () => {
     expect(timed().elapsed()).toBe(30_000);
   });
 
-  it('shows one best time at a time on the home page, the next each time', async () => {
+  it('shows one best time at a time in Challenges, the next each time', async () => {
+    screens.openChallenges();
     screens.openTimed();
     await fixture.whenStable();
     await solveIn(65); // 7×7
@@ -138,8 +138,8 @@ describe('Timed play', () => {
 
     const shown: string[] = [];
     for (let i = 0; i < 3; i++) {
-      await goHome();
-      shown.push(text('puzzle-home .card:nth-of-type(3) .status')!);
+      await goHome(); // back to Challenges
+      shown.push(text('puzzle-home .card:nth-of-type(2) .status')!);
       screens.openTimed();
       await fixture.whenStable();
     }
