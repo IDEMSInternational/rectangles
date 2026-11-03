@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { LEGAL_VERSION } from '@studio/container/legal';
 import { NEXT_PUZZLE_MS } from '@studio/container/clock-store';
 import { PuzzleScreens } from '@studio/container/puzzle-screens';
 import { RectanglesMove } from '../games/rectangles/moves';
@@ -18,7 +19,7 @@ describe('Ladder', () => {
   beforeEach(async () => {
     vi.useFakeTimers({ toFake: ['Date'], now: new Date(2026, 10, 2, 10, 0) });
     localStorage.clear();
-    localStorage.setItem('rectangles.noticeSeen', '2026-10-28');
+    localStorage.setItem('rectangles.noticeSeen', LEGAL_VERSION);
     localStorage.setItem('rectangles.tutorialSeen', '1');
     history.replaceState(null, '');
     await TestBed.configureTestingModule({ imports: [App] }).compileComponents();

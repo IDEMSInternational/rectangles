@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { LEGAL_VERSION } from '@studio/container/legal';
 import { PuzzleScreens } from '@studio/container/puzzle-screens';
 import { RectanglesMove } from '../games/rectangles/moves';
 import { RectanglesParams } from '../games/rectangles/params';
@@ -16,7 +17,7 @@ describe('Records page', () => {
   beforeEach(async () => {
     vi.useFakeTimers({ toFake: ['Date'], now: new Date(2026, 9, 30, 10, 0) }); // Friday 30 October
     localStorage.clear();
-    localStorage.setItem('rectangles.noticeSeen', '2026-10-28');
+    localStorage.setItem('rectangles.noticeSeen', LEGAL_VERSION);
     localStorage.setItem('rectangles.tutorialSeen', '1');
     const solved = { time: 60_000, onDay: true };
     localStorage.setItem(

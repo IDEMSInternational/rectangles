@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { LEGAL_VERSION } from '@studio/container/legal';
 import { PuzzleScreens } from '@studio/container/puzzle-screens';
 import { RectanglesMove } from '../games/rectangles/moves';
 import { RectanglesParams } from '../games/rectangles/params';
@@ -20,7 +21,7 @@ describe('Home page and daily puzzles', () => {
   beforeEach(async () => {
     vi.useFakeTimers({ toFake: ['Date'], now: FRIDAY });
     localStorage.clear();
-    localStorage.setItem('rectangles.noticeSeen', '2026-10-28');
+    localStorage.setItem('rectangles.noticeSeen', LEGAL_VERSION);
     localStorage.setItem('rectangles.tutorialSeen', '1');
     history.replaceState(null, '');
     await TestBed.configureTestingModule({ imports: [App] }).compileComponents();
