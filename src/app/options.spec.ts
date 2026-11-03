@@ -116,7 +116,7 @@ describe('Game options', () => {
 
     reset().click();
     await fixture.whenStable();
-    (element.querySelector('puzzle-menu .confirm .danger') as HTMLButtonElement).click();
+    (element.querySelector('puzzle-menu .confirm .primary') as HTMLButtonElement).click();
     await fixture.whenStable();
     expect(text('puzzle-menu .options [role=status]')).toBe('Your records have been deleted.');
     for (const key of ['daily.results', 'clock.records', 'ladder.best', 'timed.best']) {

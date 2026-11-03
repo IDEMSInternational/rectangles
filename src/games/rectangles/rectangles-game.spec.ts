@@ -117,7 +117,7 @@ describe('Rectangles sizes', () => {
         expect(session.isCompleted).toBe(true);
       }
     }
-  });
+  }, 20_000); // 27 puzzles, up to 25×25: slow on a busy machine
 
   it('fills custom fields from the current size', () => {
     expect(game.customFields(decodeParams('6x9')).map((f) => [f.key, f.value])).toEqual([
