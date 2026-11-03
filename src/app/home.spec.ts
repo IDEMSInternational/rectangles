@@ -70,7 +70,7 @@ describe('Home page', () => {
     play(2);
     await fixture.whenStable();
     expect(text('h1')).toBe('Challenges');
-    expect(headings()).toEqual(['Beat the clock', 'Timed play']);
+    expect(headings()).toEqual(['Beat the clock', 'Timed play', 'Ladder']);
     expect(element.querySelector('puzzle-menu')).toBeNull(); // the ☰ menu is on the home page
 
     play(1);
