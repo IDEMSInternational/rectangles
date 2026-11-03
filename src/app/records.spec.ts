@@ -99,7 +99,7 @@ describe('Records page', () => {
 
     remove(3);
     await fixture.whenStable();
-    (element.querySelector('puzzle-records .confirm .danger') as HTMLButtonElement).click(); // Yes
+    (element.querySelector('puzzle-records .confirm .delete') as HTMLButtonElement).click(); // Yes
     await fixture.whenStable();
     expect(rows()).not.toContain('Medium, 5 min | 7 puzzles');
     expect(JSON.parse(localStorage.getItem('rectangles.clock.records')!)).toEqual({ 'low/1': 1 });
@@ -108,7 +108,7 @@ describe('Records page', () => {
     remove(0);
     await fixture.whenStable();
     expect(text('#delete-what')).toContain('its streaks start again');
-    (element.querySelector('puzzle-records .confirm .danger') as HTMLButtonElement).click();
+    (element.querySelector('puzzle-records .confirm .delete') as HTMLButtonElement).click();
     await fixture.whenStable();
     expect(rows()[0]).toBe('Hard: best streak | 1 day | Now: 1 day');
     expect(Object.keys(JSON.parse(localStorage.getItem('rectangles.daily.results')!))).toEqual([
@@ -118,7 +118,7 @@ describe('Records page', () => {
 
     remove(2); // 7×7
     await fixture.whenStable();
-    (element.querySelector('puzzle-records .confirm .danger') as HTMLButtonElement).click();
+    (element.querySelector('puzzle-records .confirm .delete') as HTMLButtonElement).click();
     await fixture.whenStable();
     expect(screens.timedBest()).toBeNull();
     expect(text('puzzle-records section:nth-child(3) .none')).toBe('No records yet');
