@@ -71,22 +71,17 @@ describe('Game options', () => {
     expect(boxes().map((box) => box.checked)).toEqual([true, true, true]);
   });
 
-  it("has the game's settings for playing, the same ones as on the game screens", async () => {
+  it('has Show mistakes, the same setting as on the game screens, and no game-specific switches', async () => {
     await openOptions();
     const switches = () => Array.from(element.querySelectorAll<HTMLElement>('puzzle-menu .setting'));
-    expect(switches().map((s) => s.querySelector('puzzle-switch')!.textContent!.trim())).toEqual([
-      'Show mistakes',
-      'Lock rectangles',
-    ]);
+    expect(switches().map((s) => s.querySelector('puzzle-switch')!.textContent!.trim())).toEqual(['Show mistakes']);
     expect(switches()[0].querySelector('.hint')!.textContent).toBe('Rule-breaking pieces are shown in red');
 
     (switches()[0].querySelector('input') as HTMLInputElement).click(); // Show mistakes
-    (switches()[1].querySelector('input') as HTMLInputElement).click(); // Lock
     await fixture.whenStable();
     // One setting for every mode.
     expect(screens.session.showMistakes()).toBe(true);
     expect(screens.timed.showMistakes()).toBe(true);
-    expect((fixture.componentInstance as unknown as { locked(): boolean }).locked()).toBe(true);
 
     screens.openTimed();
     await fixture.whenStable();
@@ -95,7 +90,7 @@ describe('Game options', () => {
       (i as HTMLInputElement).checked,
     ]);
     expect(onScreen).toEqual([
-      ['Lock rectangles', true],
+      ['Lock rectangles', false],
       ['Show mistakes', true],
     ]);
   });
