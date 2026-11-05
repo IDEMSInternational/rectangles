@@ -136,15 +136,15 @@ describe('Records page', () => {
 
     share(0);
     await vi.waitFor(() => expect(writeText).toHaveBeenCalled());
-    expect(writeText).toHaveBeenLastCalledWith('Rectangles daily puzzles: my best streak at Easy is 3 days 🔥');
+    expect(writeText).toHaveBeenLastCalledWith('Rectangles daily puzzles: my best streak at Easy is 3 days 🔥\nhttps://idemsinternational.github.io/games-data/rectangles/');
     await fixture.whenStable();
     expect(text('puzzle-records li [role=status]')).toBe('Copied, ready to paste');
 
     share(2);
     await vi.waitFor(() => expect(writeText).toHaveBeenCalledTimes(2));
-    expect(writeText).toHaveBeenLastCalledWith('Rectangles, Beat the clock (Easy): my record is 1 puzzle in 1 minute');
+    expect(writeText).toHaveBeenLastCalledWith('Rectangles, Beat the clock (Easy): my record is 1 puzzle in 1 minute\nhttps://idemsinternational.github.io/games-data/rectangles/');
     share(4);
     await vi.waitFor(() => expect(writeText).toHaveBeenCalledTimes(3));
-    expect(writeText).toHaveBeenLastCalledWith('Rectangles, timed play: my best time for 7×7 is 1:05');
+    expect(writeText).toHaveBeenLastCalledWith('Rectangles, timed play: my best time for 7×7 is 1:05\nhttps://idemsinternational.github.io/games-data/rectangles/');
   });
 });

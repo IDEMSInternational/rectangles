@@ -105,7 +105,7 @@ describe('Ladder', () => {
     Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true });
     (element.querySelector('.mode-bar .row button') as HTMLButtonElement).click(); // Share
     await vi.waitFor(() => expect(writeText).toHaveBeenCalled());
-    expect(writeText).toHaveBeenCalledWith('Rectangles, Ladder: 7 sizes climbed in 1:10, a new best time!');
+    expect(writeText).toHaveBeenCalledWith('Rectangles, Ladder: 7 sizes climbed in 1:10, a new best time!\nhttps://idemsinternational.github.io/games-data/rectangles/');
 
     // Again, slower: no new best, nothing to share.
     (element.querySelector('.mode-bar button') as HTMLButtonElement).click(); // Play again

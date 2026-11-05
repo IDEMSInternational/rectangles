@@ -200,7 +200,7 @@ describe('Home page and daily puzzles', () => {
     (element.querySelector('.mode-bar button') as HTMLButtonElement).click();
     await vi.waitFor(() => expect(text('.mode-bar .shared')).toBe('Copied, ready to paste'));
     expect(writeText).toHaveBeenCalledWith(
-      'Rectangles daily puzzle #7, Easy (Friday, 6×6)\nSolved in 3:12\n🔥 2-day streak at Easy',
+      'Rectangles daily puzzle #7, Easy (Friday, 6×6)\nSolved in 3:12\n🔥 2-day streak at Easy\nhttps://idemsinternational.github.io/games-data/rectangles/',
     );
 
     await goHome();

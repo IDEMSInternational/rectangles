@@ -92,7 +92,7 @@ describe('Timed play', () => {
     Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true });
     (element.querySelector('.mode-bar button') as HTMLButtonElement).click(); // Share
     await vi.waitFor(() => expect(writeText).toHaveBeenCalled());
-    expect(writeText).toHaveBeenCalledWith('Rectangles, timed play: 7×7 solved in 1:05, a new best time!');
+    expect(writeText).toHaveBeenCalledWith('Rectangles, timed play: 7×7 solved in 1:05, a new best time!\nhttps://idemsinternational.github.io/games-data/rectangles/');
 
     timed().newGame(); // the clock starts again
     await fixture.whenStable();

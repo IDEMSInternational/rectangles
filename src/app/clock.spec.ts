@@ -206,7 +206,7 @@ describe('Beat the clock', () => {
     (element.querySelector('.mode-bar .row button') as HTMLButtonElement).click(); // Share
     await vi.waitFor(() => expect(writeText).toHaveBeenCalled());
     expect(writeText).toHaveBeenCalledWith(
-      'Rectangles, Beat the clock (Medium): 1 puzzle solved in 5 minutes, a new record!',
+      'Rectangles, Beat the clock (Medium): 1 puzzle solved in 5 minutes, a new record!\nhttps://idemsinternational.github.io/games-data/rectangles/',
     );
 
     (element.querySelector('.mode-bar button') as HTMLButtonElement).click(); // Play again
