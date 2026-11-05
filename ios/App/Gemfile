@@ -1,0 +1,5 @@
+source "https://rubygems.org"
+
+# Builds and signs the app, and uploads it to TestFlight (see fastlane/Fastfile).
+# Gemfile.lock pins the version, so CI uses the same one each time.
+gem "fastlane"
