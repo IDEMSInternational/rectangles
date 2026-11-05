@@ -48,7 +48,7 @@ describe('App', () => {
     expect(element.querySelector('puzzle-notice .notice')).toBeNull();
   });
 
-  it('has a ☰ menu with the studio pages, most "coming soon" for now', async () => {
+  it('has a ☰ menu with the studio pages', async () => {
     localStorage.setItem('rectangles.tutorialSeen', '1'); // straight to the home page
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
@@ -61,7 +61,6 @@ describe('App', () => {
       'Game options',
       'Announcements',
       'Acknowledgements',
-      'About IDEMS Games',
       'Other IDEMS Games',
       'Licence',
       'Terms and Conditions',
@@ -69,13 +68,6 @@ describe('App', () => {
     ]);
     expect(element.querySelector('puzzle-menu .version')?.textContent).toBe(`Rectangles version ${version}`);
 
-    (element.querySelectorAll('puzzle-menu nav button')[3] as HTMLButtonElement).click();
-    await fixture.whenStable();
-    expect(element.querySelector('puzzle-menu h2')?.textContent).toBe('About IDEMS Games');
-    expect(element.querySelector('puzzle-menu .soon')?.textContent).toContain('Coming soon');
-
-    (element.querySelector('puzzle-menu header .icon') as HTMLButtonElement).click(); // back
-    await fixture.whenStable();
     (element.querySelectorAll('puzzle-menu nav button')[2] as HTMLButtonElement).click();
     await fixture.whenStable();
     expect(element.querySelector('puzzle-menu .page')?.textContent).toContain("Simon Tatham's Portable Puzzle Collection");
@@ -85,7 +77,7 @@ describe('App', () => {
 
     (element.querySelector('puzzle-menu header .icon') as HTMLButtonElement).click(); // back
     await fixture.whenStable();
-    (element.querySelectorAll('puzzle-menu nav button')[5] as HTMLButtonElement).click();
+    (element.querySelectorAll('puzzle-menu nav button')[4] as HTMLButtonElement).click();
     await fixture.whenStable();
     expect(element.querySelector('puzzle-menu .page')?.textContent).toContain(
       'Rectangles is © 2026 IDEMS International, and it is open source.',
@@ -119,10 +111,11 @@ describe('App', () => {
 
     (element.querySelector('puzzle-menu header .icon') as HTMLButtonElement).click(); // back
     await fixture.whenStable();
-    (element.querySelectorAll('puzzle-menu nav button')[7] as HTMLButtonElement).click();
+    (element.querySelectorAll('puzzle-menu nav button')[6] as HTMLButtonElement).click();
     await fixture.whenStable();
     const headings = Array.from(element.querySelectorAll('puzzle-menu .page h3'), (h) => h.textContent);
     expect(headings).toContain('Changes, including future research');
+    expect(element.querySelector('puzzle-menu .page')?.textContent).toContain('games@idems.international');
 
     element.querySelector('puzzle-menu .panel')!.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
     await fixture.whenStable();
