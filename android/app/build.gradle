@@ -7,10 +7,10 @@ def appVersion = new groovy.json.JsonSlurper().parse(file('../../package.json'))
 def (major, minor, patch) = appVersion.tokenize('.')*.toInteger()
 
 android {
-    namespace = "idems.games.rectangles"
+    namespace = "international.idems.games.rectangles"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "idems.games.rectangles"
+        applicationId "international.idems.games.rectangles"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode major * 1000000 + minor * 1000 + patch

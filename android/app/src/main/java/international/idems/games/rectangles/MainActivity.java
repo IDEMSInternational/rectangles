@@ -1,4 +1,4 @@
-package idems.games.rectangles;
+package international.idems.games.rectangles;
 
 import com.getcapacitor.BridgeActivity;
 
