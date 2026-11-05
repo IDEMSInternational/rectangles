@@ -10,7 +10,8 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "apk": "node tools/build-apk.mjs",
-    "app-images": "capacitor-assets generate --android --assetPath assets/app --iconBackgroundColor #fffdf8 --iconBackgroundColorDark #fffdf8 --splashBackgroundColor #f6f3ed --splashBackgroundColorDark #f6f3ed"
+    "version": "node tools/ios-version.mjs && git add ios/App/App.xcodeproj/project.pbxproj",
+    "app-images": "capacitor-assets generate --android --ios --assetPath assets/app --iconBackgroundColor #fffdf8 --iconBackgroundColorDark #fffdf8 --splashBackgroundColor #f6f3ed --splashBackgroundColorDark #f6f3ed"
   },
   "private": true,
   "packageManager": "npm@11.6.2",
@@ -24,6 +25,7 @@
     "@capacitor/android": "^8.5.3",
     "@capacitor/app": "^8.1.2",
     "@capacitor/core": "^8.5.3",
+    "@capacitor/ios": "^8.6.0",
     "@capacitor/preferences": "^8.0.1",
     "@capacitor/share": "^8.0.3",
     "rxjs": "~7.8.0",

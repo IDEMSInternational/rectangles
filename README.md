@@ -15,7 +15,7 @@ and that number is its area.
   the original, so a game ID such as `7x7#123456789012345` gives the same
   puzzle as the original collection.
 
-Built with Angular and Capacitor (Android, and iOS later).
+Built with Angular and Capacitor, for Android and iOS.
 
 ## Getting started
 
@@ -42,6 +42,17 @@ npm run apk            # Android debug APK -> Rectangles.apk
 `npm run apk` needs JDK 21 (`JAVA_HOME`) and the Android SDK (`ANDROID_HOME`,
 or `android/local.properties` with `sdk.dir=...`).
 
+The iOS app needs a Mac with Xcode (or a macOS GitHub Actions runner). The
+web build isn't committed in `ios/`, so build it and copy it in first, then
+open or build `ios/App/App.xcodeproj` (scheme `App`; Swift Package Manager,
+no CocoaPods):
+
+```sh
+npm ci
+npm run build
+npx cap sync ios
+```
+
 To use a newer version of the shared code:
 
 ```sh
@@ -56,7 +67,9 @@ The version lives in `package.json` only, as major.minor.patch (patch for
 fixes, minor for new features, major for big changes). The menu shows it, and
 the Android build reads it: `versionName` is the same text, and `versionCode`
 (which must go up with every store upload) is major × 1,000,000 + minor × 1,000
-+ patch, so 1.2.3 is 1002003. Each game has its own version.
++ patch, so 1.2.3 is 1002003. `npm version` also writes the same two numbers
+into the iOS project (`MARKETING_VERSION` and `CURRENT_PROJECT_VERSION`, via
+`tools/ios-version.mjs`). Each game has its own version.
 
 To release, bump the version (this commits and tags it, e.g. `v1.0.1`), push
 with the tag, then build:
@@ -86,6 +99,10 @@ tools/c-reference/          builds the original C generator to record
                             reference puzzles (needs gcc and a checkout
                             of the original collection next to this one)
 android/                    Capacitor's Android project
+ios/                        Capacitor's iOS project (with Apple's privacy
+                            manifest, App/App/PrivacyInfo.xcprivacy)
+assets/app/                 icon and launch screen sources (tools/make-icon.mjs,
+                            then npm run app-images for both platforms)
 ```
 
 ## Licence
