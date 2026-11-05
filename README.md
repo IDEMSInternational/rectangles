@@ -79,9 +79,52 @@ npm version patch      # or minor / major
 git push --follow-tags
 ```
 
+For iOS, then run **iOS - Release** from the repository's Actions tab: it
+builds the app and uploads it to TestFlight. As on Google Play, each upload
+needs a new version.
+
 While in beta the version stays below 1.0.0 (0.1.0, 0.2.0, ...); 1.0.0 is the
 first full public release. For the first release, tag the current version
 instead: `git tag v0.1.0`.
+
+### iOS release setup
+
+The **iOS - Release** workflow (`.github/workflows/ios-release.yml`, which runs
+`ios/App/fastlane/Fastfile`) signs the app as the open-app-builder apps do:
+[fastlane match](https://docs.fastlane.tools/actions/match/), with the
+certificate and profiles kept encrypted in a Google Cloud Storage bucket. The
+open-app-builder
+[iOS release guide](https://github.com/IDEMSInternational/open-app-builder-actions/blob/main/.github/workflows/ios-release.md)
+explains the bucket, the service account and the App Store Connect API key.
+Once per app:
+
+1. In the IDEMS Apple Developer account, register the App ID
+   `international.idems.games.rectangles` (no extra capabilities). Then create
+   the app in App Store Connect with that bundle ID, and add an internal
+   TestFlight group.
+2. The workflow needs the variables and secrets below. The three variables are
+   IDEMS organisation variables, already shared with this repository; they
+   point at the bucket that holds the IDEMS distribution certificate. The
+   secrets must match them, above all the bucket's encryption password: given
+   a bucket it can't read, match would try to create a new certificate, and
+   Apple allows only a few. Add them in the repository's or the organisation's
+   Actions settings.
+
+   | Type     | Name                                | Value                                    |
+   | -------- | ----------------------------------- | ---------------------------------------- |
+   | Variable | `APP_STORE_TEAM_ID`                 | Apple Developer Team ID                  |
+   | Variable | `GCP_IOS_CERTS_PROJECT_ID`          | Google Cloud project holding the bucket  |
+   | Variable | `GCP_IOS_CERTS_BUCKET_ID`           | The bucket's name                        |
+   | Secret   | `APP_STORE_CONNECT_API_KEY_ID`      | App Store Connect API key ID             |
+   | Secret   | `APP_STORE_CONNECT_API_ISSUER_ID`   | Its issuer ID                            |
+   | Secret   | `APP_STORE_CONNECT_API_KEY`         | The contents of its `.p8` file           |
+   | Secret   | `GCP_IOS_CERTS_SERVICE_ACCOUNT_KEY` | Service account JSON key for the bucket  |
+   | Secret   | `GCP_IOS_CERTS_ENCRYPTION_PASSWORD` | match's encryption password              |
+
+3. Run **iOS - Release** once with **allow_provisioning_changes** ticked, so
+   that match creates the app's provisioning profile and stores it in the
+   bucket. Leave it unticked after that, so that a release can't change the
+   signing by accident.
 
 ## Layout
 
@@ -101,6 +144,8 @@ tools/c-reference/          builds the original C generator to record
 android/                    Capacitor's Android project
 ios/                        Capacitor's iOS project (with Apple's privacy
                             manifest, App/App/PrivacyInfo.xcprivacy)
+ios/App/fastlane/           builds, signs and uploads to TestFlight; run by
+                            .github/workflows/ios-release.yml
 assets/app/                 icon and launch screen sources (tools/make-icon.mjs,
                             then npm run app-images for both platforms)
 ```

@@ -14,7 +14,7 @@
     "app-images": "capacitor-assets generate --android --ios --assetPath assets/app --iconBackgroundColor #fffdf8 --iconBackgroundColorDark #fffdf8 --splashBackgroundColor #f6f3ed --splashBackgroundColorDark #f6f3ed"
   },
   "private": true,
-  "packageManager": "npm@11.6.2",
+  "packageManager": "npm@11.19.1",
   "dependencies": {
     "@angular/common": "^21.2.0",
     "@angular/compiler": "^21.2.0",
