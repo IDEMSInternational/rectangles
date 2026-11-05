@@ -55,13 +55,7 @@
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
-	<key>UISupportedInterfaceOrientations~ipad</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-	</array>
-	<!-- Portrait only, as on Android; on iPad that needs the whole screen (no split view). -->
-	<key>UIRequiresFullScreen</key>
-	<true/>
+	<!-- Portrait only, as on Android. The app is for iPhone only (TARGETED_DEVICE_FAMILY = 1). -->
 	<!-- Only standard HTTPS (the announcements download), which is exempt: no export compliance questions. -->
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
