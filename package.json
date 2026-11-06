@@ -1,6 +1,6 @@
 {
   "name": "rectangles",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Rectangles: an IDEMS educational puzzle game (Angular + Capacitor).",
   "license": "MIT",
   "scripts": {
