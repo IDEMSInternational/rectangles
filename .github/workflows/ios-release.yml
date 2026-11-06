@@ -24,9 +24,8 @@ permissions:
 
 jobs:
   release:
-    uses: IDEMSInternational/games-common-core/.github/workflows/ios-release.yml@ios-release
+    uses: IDEMSInternational/games-common-core/.github/workflows/ios-release.yml@main
     with:
       target: ${{ inputs.target }}
       allow_provisioning_changes: ${{ inputs.allow_provisioning_changes }}
-      games_common_core_ref: ios-release
     secrets: inherit
