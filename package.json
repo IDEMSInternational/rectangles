@@ -1,6 +1,6 @@
 {
   "name": "rectangles",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Rectangles: an IDEMS educational puzzle game (Angular + Capacitor).",
   "license": "MIT",
   "scripts": {
@@ -10,7 +10,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "apk": "node tools/build-apk.mjs",
-    "version": "node tools/ios-version.mjs && git add ios/App/App.xcodeproj/project.pbxproj",
+    "version": "node games-common-core/ios-release/ios-version.mjs && git add ios/App/App.xcodeproj/project.pbxproj",
     "app-images": "capacitor-assets generate --android --ios --assetPath assets/app --iconBackgroundColor #fffdf8 --iconBackgroundColorDark #fffdf8 --splashBackgroundColor #f6f3ed --splashBackgroundColorDark #f6f3ed"
   },
   "private": true,

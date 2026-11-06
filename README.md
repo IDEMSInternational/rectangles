@@ -66,10 +66,10 @@ git commit -am "Update games-common-core"
 The version lives in `package.json` only, as major.minor.patch (patch for
 fixes, minor for new features, major for big changes). The menu shows it, and
 the Android build reads it: `versionName` is the same text, and `versionCode`
-(which must go up with every store upload) is major × 1,000,000 + minor × 1,000
-+ patch, so 1.2.3 is 1002003. `npm version` also writes the same two numbers
+(which must go up with every store upload) is major × 1,000,000 + minor ×
+1,000 + patch, so 1.2.3 is 1002003. `npm version` also writes the same two numbers
 into the iOS project (`MARKETING_VERSION` and `CURRENT_PROJECT_VERSION`, via
-`tools/ios-version.mjs`). Each game has its own version.
+`games-common-core/ios-release/ios-version.mjs`). Each game has its own version.
 
 To release, bump the version (this commits and tags it, e.g. `v1.0.1`), push
 with the tag, then build:
@@ -89,42 +89,17 @@ instead: `git tag v0.1.0`.
 
 ### iOS release setup
 
-The **iOS - Release** workflow (`.github/workflows/ios-release.yml`, which runs
-`ios/App/fastlane/Fastfile`) signs the app as the open-app-builder apps do:
-[fastlane match](https://docs.fastlane.tools/actions/match/), with the
-certificate and profiles kept encrypted in a Google Cloud Storage bucket. The
-open-app-builder
-[iOS release guide](https://github.com/IDEMSInternational/open-app-builder-actions/blob/main/.github/workflows/ios-release.md)
-explains the bucket, the service account and the App Store Connect API key.
-Once per app:
+**iOS - Release** (`.github/workflows/ios-release.yml`) runs the iOS release
+shared by every IDEMS game, from games-common-core:
+[games-common-core/ios-release/README.md](https://github.com/IDEMSInternational/games-common-core/blob/main/ios-release/README.md)
+explains how it works and how a game is set up for it. For Rectangles that's
+done: the App ID `international.idems.games.rectangles` is registered, with
+its app in App Store Connect, and the IDEMS organisation's signing variables
+and secrets are shared with this repository.
 
-1. In the IDEMS Apple Developer account, register the App ID
-   `international.idems.games.rectangles` (no extra capabilities). Then create
-   the app in App Store Connect with that bundle ID, and add an internal
-   TestFlight group.
-2. The workflow needs the variables and secrets below. The three variables are
-   IDEMS organisation variables, already shared with this repository; they
-   point at the bucket that holds the IDEMS distribution certificate. The
-   secrets must match them, above all the bucket's encryption password: given
-   a bucket it can't read, match would try to create a new certificate, and
-   Apple allows only a few. Add them in the repository's or the organisation's
-   Actions settings.
-
-   | Type     | Name                                | Value                                    |
-   | -------- | ----------------------------------- | ---------------------------------------- |
-   | Variable | `APP_STORE_TEAM_ID`                 | Apple Developer Team ID                  |
-   | Variable | `GCP_IOS_CERTS_PROJECT_ID`          | Google Cloud project holding the bucket  |
-   | Variable | `GCP_IOS_CERTS_BUCKET_ID`           | The bucket's name                        |
-   | Secret   | `APP_STORE_CONNECT_API_KEY_ID`      | App Store Connect API key ID             |
-   | Secret   | `APP_STORE_CONNECT_API_ISSUER_ID`   | Its issuer ID                            |
-   | Secret   | `APP_STORE_CONNECT_API_KEY`         | The contents of its `.p8` file           |
-   | Secret   | `GCP_IOS_CERTS_SERVICE_ACCOUNT_KEY` | Service account JSON key for the bucket  |
-   | Secret   | `GCP_IOS_CERTS_ENCRYPTION_PASSWORD` | match's encryption password              |
-
-3. Run **iOS - Release** once with **allow_provisioning_changes** ticked, so
-   that match creates the app's provisioning profile and stores it in the
-   bucket. Leave it unticked after that, so that a release can't change the
-   signing by accident.
+The App ID is set in several files;
+[A game's App ID](https://github.com/IDEMSInternational/games-common-core#a-games-app-id) lists them and
+explains how to change it.
 
 ## Layout
 
@@ -144,8 +119,8 @@ tools/c-reference/          builds the original C generator to record
 android/                    Capacitor's Android project
 ios/                        Capacitor's iOS project (with Apple's privacy
                             manifest, App/App/PrivacyInfo.xcprivacy)
-ios/App/fastlane/           builds, signs and uploads to TestFlight; run by
-                            .github/workflows/ios-release.yml
+.github/workflows/          iOS - Release, which runs the iOS release shared
+                            by every game (games-common-core/ios-release/)
 assets/app/                 icon and launch screen sources (tools/make-icon.mjs,
                             then npm run app-images for both platforms)
 ```
