@@ -43,5 +43,8 @@ __screenshots__/
 .DS_Store
 Thumbs.db
 
-# Android builds
+# Android builds, and signing keys (never committed)
 *.apk
+*.aab
+*.jks
+*.keystore

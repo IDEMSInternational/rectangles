@@ -37,10 +37,17 @@ npm start              # dev server at http://localhost:4200
 npm test               # unit tests, including 680 puzzles checked against the original
 npm run build          # production web build
 npm run apk            # Android debug APK -> Rectangles.apk
+npm run aab            # Android release bundle for Google Play -> Rectangles.aab
 ```
 
-`npm run apk` needs JDK 21 (`JAVA_HOME`) and the Android SDK (`ANDROID_HOME`,
-or `android/local.properties` with `sdk.dir=...`).
+`npm run apk` and `npm run aab` need JDK 21 (`JAVA_HOME`) and the Android SDK
+(`ANDROID_HOME`, or `android/local.properties` with `sdk.dir=...`).
+
+Google Play only accepts a bundle signed with the app's upload key, which is
+never committed. `npm run aab` signs the bundle when these are set, and builds
+it unsigned otherwise: `ANDROID_KEYSTORE` (path to the `.jks` file),
+`ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS` and, if it differs from the
+keystore's, `ANDROID_KEY_PASSWORD`.
 
 The iOS app needs a Mac with Xcode (or a macOS GitHub Actions runner). The
 web build isn't committed in `ios/`, so build it and copy it in first, then

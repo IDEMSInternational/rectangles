@@ -6,6 +6,12 @@ apply plugin: 'com.android.application'
 def appVersion = new groovy.json.JsonSlurper().parse(file('../../package.json')).version
 def (major, minor, patch) = appVersion.tokenize('.')*.toInteger()
 
+// Release signing, for the bundle uploaded to Google Play (npm run aab). The
+// upload key is never committed: it's given through these environment
+// variables (locally, or from GitHub secrets). Without them, the release
+// bundle is built unsigned.
+def uploadKeystore = System.getenv('ANDROID_KEYSTORE')
+
 android {
     namespace = "international.idems.games.rectangles"
     compileSdk = rootProject.ext.compileSdkVersion
@@ -22,8 +28,21 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    signingConfigs {
+        if (uploadKeystore) {
+            release {
+                storeFile file(uploadKeystore)
+                storePassword System.getenv('ANDROID_KEYSTORE_PASSWORD')
+                keyAlias System.getenv('ANDROID_KEY_ALIAS')
+                keyPassword System.getenv('ANDROID_KEY_PASSWORD') ?: System.getenv('ANDROID_KEYSTORE_PASSWORD')
+            }
+        }
+    }
     buildTypes {
         release {
+            if (uploadKeystore) {
+                signingConfig signingConfigs.release
+            }
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
