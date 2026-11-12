@@ -29,7 +29,10 @@ if (keystore) {
 run('npx ng build');
 run('npx cap sync android');
 run(`${gradlew} bundleRelease`, android);
-copyFileSync(join(android, 'app/build/outputs/bundle/release/app-release.aab'), join(root, 'Rectangles.aab'));
+copyFileSync(
+  join(android, 'app/build/outputs/bundle/release/app-release.aab'),
+  join(root, 'Rectangles.aab'),
+);
 console.log(
   keystore
     ? '\nSigned bundle ready: Rectangles.aab'
