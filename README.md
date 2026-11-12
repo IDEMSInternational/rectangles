@@ -37,10 +37,17 @@ npm start              # dev server at http://localhost:4200
 npm test               # unit tests, including 680 puzzles checked against the original
 npm run build          # production web build
 npm run apk            # Android debug APK -> Rectangles.apk
+npm run aab            # Android release bundle for Google Play -> Rectangles.aab
 ```
 
-`npm run apk` needs JDK 21 (`JAVA_HOME`) and the Android SDK (`ANDROID_HOME`,
-or `android/local.properties` with `sdk.dir=...`).
+`npm run apk` and `npm run aab` need JDK 21 (`JAVA_HOME`) and the Android SDK
+(`ANDROID_HOME`, or `android/local.properties` with `sdk.dir=...`).
+
+Google Play only accepts a bundle signed with the app's upload key, which is
+never committed. `npm run aab` signs the bundle when these are set, and builds
+it unsigned otherwise: `ANDROID_KEYSTORE` (path to the `.jks` file),
+`ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS` and, if it differs from the
+keystore's, `ANDROID_KEY_PASSWORD`.
 
 The iOS app needs a Mac with Xcode (or a macOS GitHub Actions runner). The
 web build isn't committed in `ios/`, so build it and copy it in first, then
@@ -79,9 +86,10 @@ npm version patch      # or minor / major
 git push --follow-tags
 ```
 
-For iOS, then run **iOS - Release** from the repository's Actions tab: it
-builds the app and uploads it to TestFlight. As on Google Play, each upload
-needs a new version.
+Then run **iOS - Release** from the repository's Actions tab, which builds the
+app and uploads it to TestFlight, and **Android - Release**, which builds the
+bundle, signs it and uploads it to Google Play (internal testing by default).
+Each upload needs a new version.
 
 While in beta the version stays below 1.0.0 (0.1.0, 0.2.0, ...); 1.0.0 is the
 first full public release. For the first release, tag the current version
@@ -96,6 +104,17 @@ explains how it works and how a game is set up for it. For Rectangles that's
 done: the App ID `international.idems.games.rectangles` is registered, with
 its app in App Store Connect, and the IDEMS organisation's signing variables
 and secrets are shared with this repository.
+
+### Android release setup
+
+**Android - Release** (`.github/workflows/android-release.yml`) runs the
+Android release shared by every IDEMS game, from games-common-core:
+[games-common-core/android-release/README.md](https://github.com/IDEMSInternational/games-common-core/blob/main/android-release/README.md)
+explains how it works and how a game is set up for it: the upload key, the
+Google Play service account, their secrets (`SIGNING_KEY`, `ALIAS`,
+`KEY_STORE_PASSWORD`, `KEY_PASSWORD`, `GOOGLE_PLAY_SERVICE_ACCOUNT_JSON`), and
+the first upload, which Google Play only takes by hand. For Rectangles, none of
+that is done yet.
 
 The App ID is set in several files;
 [A game's App ID](https://github.com/IDEMSInternational/games-common-core#a-games-app-id) lists them and
@@ -119,8 +138,9 @@ tools/c-reference/          builds the original C generator to record
 android/                    Capacitor's Android project
 ios/                        Capacitor's iOS project (with Apple's privacy
                             manifest, App/App/PrivacyInfo.xcprivacy)
-.github/workflows/          iOS - Release, which runs the iOS release shared
-                            by every game (games-common-core/ios-release/)
+.github/workflows/          iOS - Release and Android - Release, which run
+                            the releases shared by every game
+                            (games-common-core/ios-release/, android-release/)
 assets/app/                 icon and launch screen sources (tools/make-icon.mjs,
                             then npm run app-images for both platforms)
 ```

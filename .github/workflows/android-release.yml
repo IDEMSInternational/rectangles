@@ -1,0 +1,37 @@
+# Builds the app and uploads it to Google Play, with the Android release shared
+# by every IDEMS game (games-common-core/android-release/README.md). Start it by
+# hand from the Actions tab, after `npm version` and `git push --follow-tags`.
+name: Android - Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      track:
+        description: 'Where to release (none: only build the signed bundle, to download)'
+        required: true
+        default: internal
+        type: choice
+        options:
+          - internal
+          - alpha
+          - beta
+          - none
+      status:
+        description: 'completed: released straight away; draft: finish it in the Play Console'
+        required: true
+        default: completed
+        type: choice
+        options:
+          - completed
+          - draft
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    uses: IDEMSInternational/games-common-core/.github/workflows/android-release.yml@main
+    with:
+      track: ${{ inputs.track }}
+      status: ${{ inputs.status }}
+    secrets: inherit
