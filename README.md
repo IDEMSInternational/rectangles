@@ -147,5 +147,5 @@ assets/app/                 icon and launch screen sources (tools/make-icon.mjs,
 
 ## Licence
 
-MIT. Parts are ports of Simon Tatham's Portable Puzzle Collection; see
-[LICENSE](LICENSE).
+MIT; see [LICENSE](LICENSE). Parts are ports of Simon Tatham's Portable
+Puzzle Collection, whose notice is in [THIRD-PARTY-NOTICES](THIRD-PARTY-NOTICES).
