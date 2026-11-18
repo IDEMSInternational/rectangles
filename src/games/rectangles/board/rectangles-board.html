@@ -51,43 +51,15 @@
 
   @if (hintView(); as h) {
     @if (!preview()) {
-      @if (h.gesture === 'drag') {
-        <circle class="board-finger" r="0.22">
-          <animateMotion [attr.path]="h.path" dur="1.8s" repeatCount="indefinite" keyPoints="0;0;1;1" keyTimes="0;0.2;0.8;1" calcMode="linear" />
-        </circle>
-      } @else {
-        <circle class="board-finger tap" [attr.cx]="h.centre.x" [attr.cy]="h.centre.y" r="0.22" />
-      }
+      <g boardFinger [at]="h.tap" [along]="h.along" />
     }
   }
 
   @if (noteLabel(); as label) {
-    <g class="board-label note" role="status">
-      <rect
-        [attr.x]="label.x"
-        [attr.y]="label.y"
-        [attr.width]="label.width"
-        [attr.height]="label.height"
-        [attr.rx]="label.height / 2"
-      />
-      <text [attr.x]="label.x + label.width / 2" [attr.y]="label.y + label.height / 2 + 0.02">
-        {{ label.text }}
-      </text>
-    </g>
+    <g boardLabel class="note" role="status" [label]="label" />
   }
 
   @if (sizeLabel(); as label) {
-    <g class="board-label" [class.note]="label.blocked" aria-live="polite">
-      <rect
-        [attr.x]="label.x"
-        [attr.y]="label.y"
-        [attr.width]="label.width"
-        [attr.height]="label.height"
-        [attr.rx]="label.height / 2"
-      />
-      <text [attr.x]="label.x + label.width / 2" [attr.y]="label.y + label.height / 2 + 0.02">
-        {{ label.text }}
-      </text>
-    </g>
+    <g boardLabel [class.note]="label.blocked" aria-live="polite" [label]="label" />
   }
 </svg>
