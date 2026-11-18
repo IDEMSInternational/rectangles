@@ -1,9 +1,11 @@
 import { TestBed } from '@angular/core/testing';
-import { SessionStore } from '@studio/container/session-store';
-import { version } from '../../package.json';
-import { rectanglesGame } from '../games/rectangles/rectangles-game';
+import { LEGAL_VERSION } from '@studio/container/legal';
 import { App } from './app';
 
+/**
+ * Rectangles in the shared app. The shared screens' own tests are in
+ * games-common-core, beside the code in src/container, and run with these.
+ */
 describe('App', () => {
   beforeEach(async () => {
     localStorage.clear();
@@ -13,9 +15,6 @@ describe('App', () => {
     }).compileComponents();
   });
 
-  /** A puzzle session as timed play keeps it (opening the app again: another one). */
-  const newSession = () => TestBed.runInInjectionContext(() => new SessionStore(rectanglesGame));
-
   it('renders a Rectangles board inside the puzzle shell', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
@@ -23,175 +22,33 @@ describe('App', () => {
     expect(element.querySelector('h1')?.textContent).toContain('Rectangles');
     expect(element.querySelector('rectangles-board svg')).toBeTruthy();
     expect(element.querySelectorAll('.clue').length).toBeGreaterThan(0);
-    expect(element.querySelector('puzzle-splash img')?.getAttribute('src')).toBe('studio/idems-games-logo.jpg');
-  });
-
-  it('shows the welcome notice on first launch only, with the terms and privacy policy', async () => {
-    let fixture = TestBed.createComponent(App);
-    await fixture.whenStable();
-    let element = fixture.nativeElement as HTMLElement;
-    expect(element.querySelector('puzzle-notice h2')?.textContent).toBe('Welcome to Rectangles');
-    const documents = Array.from(element.querySelectorAll('puzzle-notice summary'), (s) => s.textContent!.trim());
-    expect(documents).toEqual(['Terms and Conditions', 'Privacy Policy']);
-    expect(element.querySelector('puzzle-notice')?.textContent).toContain(
-      'At the moment, the apps do not collect any personal information.',
+    expect(element.querySelector('puzzle-splash img')?.getAttribute('src')).toBe(
+      'studio/idems-games-logo.jpg',
     );
-
-    (element.querySelector('puzzle-notice button') as HTMLButtonElement).click();
-    await fixture.whenStable();
-    expect(element.querySelector('puzzle-notice .notice')).toBeNull();
-
-    fixture.destroy();
-    fixture = TestBed.createComponent(App); // opening the app again
-    await fixture.whenStable();
-    element = fixture.nativeElement as HTMLElement;
-    expect(element.querySelector('puzzle-notice .notice')).toBeNull();
   });
 
-  it('has a ☰ menu with the studio pages', async () => {
-    localStorage.setItem('rectangles.tutorialSeen', '1'); // straight to the home page
+  it('has the Lock switch beside Show mistakes, remembered on the device', async () => {
+    localStorage.setItem('rectangles.noticeSeen', LEGAL_VERSION);
+    localStorage.setItem('rectangles.tutorialSeen', '1');
     const fixture = TestBed.createComponent(App);
+    const screens = (fixture.componentInstance as unknown as { screens: { openTimed(): void } })
+      .screens;
+    screens.openTimed();
     await fixture.whenStable();
     const element = fixture.nativeElement as HTMLElement;
-
-    (element.querySelector('puzzle-menu .opener') as HTMLButtonElement).click();
-    await fixture.whenStable();
-    const items = Array.from(element.querySelectorAll('puzzle-menu nav button'), (b) => b.textContent!.trim());
-    expect(items).toEqual([
-      'Game options',
-      'Announcements',
-      'Acknowledgements',
-      'Other IDEMS Games',
-      'Licence',
-      'Terms and Conditions',
-      'Privacy Policy',
-    ]);
-    expect(element.querySelector('puzzle-menu .version')?.textContent).toBe(`Rectangles version ${version}`);
-
-    (element.querySelectorAll('puzzle-menu nav button')[2] as HTMLButtonElement).click();
-    await fixture.whenStable();
-    expect(element.querySelector('puzzle-menu .page')?.textContent).toContain("Simon Tatham's Portable Puzzle Collection");
-    const link = element.querySelector('puzzle-menu .link-card') as HTMLAnchorElement;
-    expect(link.href).toBe('https://www.chiark.greenend.org.uk/~sgtatham/puzzles/');
-    expect(link.textContent).toContain('chiark.greenend.org.uk/~sgtatham/puzzles');
-
-    (element.querySelector('puzzle-menu header .icon') as HTMLButtonElement).click(); // back
-    await fixture.whenStable();
-    (element.querySelectorAll('puzzle-menu nav button')[4] as HTMLButtonElement).click();
-    await fixture.whenStable();
-    expect(element.querySelector('puzzle-menu .page')?.textContent).toContain(
-      'Rectangles is © 2026 IDEMS International, and it is open source.',
-    );
-    const repos = Array.from(element.querySelectorAll<HTMLAnchorElement>('puzzle-menu .link-card'), (a) => a.href);
-    expect(repos).toEqual([
-      'https://github.com/IDEMSInternational/rectangles',
-      'https://github.com/IDEMSInternational/games-common-core',
-    ]);
-    const licence = element.querySelector('puzzle-menu .page section blockquote')?.textContent;
-    expect(licence).toContain('Copyright (c) 2026 IDEMS International.');
-    expect(licence).toContain(
-      "Parts of this software are ports of Simon Tatham's Portable Puzzle Collection, which carries this notice:",
-    );
-    const inline = element.querySelector('puzzle-menu .page section blockquote a') as HTMLAnchorElement;
-    expect(inline.href).toBe('https://www.chiark.greenend.org.uk/~sgtatham/puzzles/');
-    expect(licence).toContain('This software is copyright (c) 2004-2024 Simon Tatham.');
-    expect(licence).toContain('THE SOFTWARE IS PROVIDED "AS IS"');
-    const others = element.querySelector('puzzle-menu .page')?.textContent;
-    expect(others).toContain('Angular: Copyright (c) 2010-2026 Google LLC.');
-    expect(others).toContain('AndroidX libraries: The Android Open Source Project.');
-    expect(others).toContain('END OF TERMS AND CONDITIONS'); // the whole Apache License
-    const accordions = Array.from(element.querySelectorAll('puzzle-menu details'), (d) => [
-      d.querySelector('summary')!.textContent!.trim(),
-      (d as HTMLDetailsElement).open,
-    ]);
-    expect(accordions).toEqual([
-      ['Other open-source software', false],
-      ['Apache License', false],
+    const switches = () =>
+      Array.from(element.querySelectorAll('puzzle-shell puzzle-switch input'), (i) => [
+        i.parentElement!.textContent!.trim(),
+        (i as HTMLInputElement).checked,
+      ]);
+    expect(switches()).toEqual([
+      ['Lock rectangles', false],
+      ['Show mistakes', false],
     ]);
 
-    (element.querySelector('puzzle-menu header .icon') as HTMLButtonElement).click(); // back
+    (element.querySelector('puzzle-shell puzzle-switch input') as HTMLInputElement).click();
     await fixture.whenStable();
-    (element.querySelectorAll('puzzle-menu nav button')[6] as HTMLButtonElement).click();
-    await fixture.whenStable();
-    const headings = Array.from(element.querySelectorAll('puzzle-menu .page h3'), (h) => h.textContent);
-    expect(headings).toContain('Changes, including future research');
-    expect(element.querySelector('puzzle-menu .page')?.textContent).toContain('games@idems.international');
-
-    element.querySelector('puzzle-menu .panel')!.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
-    await fixture.whenStable();
-    expect(element.querySelector('puzzle-menu nav')).toBeTruthy(); // back to the list
-    element.querySelector('puzzle-menu .panel')!.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
-    await fixture.whenStable();
-    expect(element.querySelector('puzzle-menu .panel')).toBeNull(); // closed
-  });
-
-  it('starts in the size played last time, and remembers new choices', () => {
-    localStorage.setItem('rectangles.size', '5x8');
-    const session = newSession();
-    expect(session.gameId()).toMatch(/^5x8#/);
-
-    session.newGame(5); // the 9×9 preset
-    expect(localStorage.getItem('rectangles.size')).toBe('9x9');
-  });
-
-  it('continues the game in progress after a reload, undo history included', () => {
-    const first = newSession();
-    first.move({ kind: 'draw', rect: { x: 0, y: 0, w: 2, h: 1 } });
-    first.move({ kind: 'draw', rect: { x: 3, y: 3, w: 1, h: 2 } });
-    first.undo();
-
-    // "Reopen the app": a new component reads what the first one saved.
-    const second = newSession();
-    expect(second.gameId()).toBe(first.gameId());
-    expect(second.state().rects).toEqual([{ x: 0, y: 0, w: 2, h: 1 }]);
-    expect(second.canRedo()).toBe(true);
-    second.redo();
-    expect(second.state().rects.length).toBe(2);
-  });
-
-  it('forgets a finished puzzle, keeping only its size, so a reload starts a new one', () => {
-    const first = newSession();
-    first.newGame(1); // 5×5
-    first.solve();
-    expect(first.completed()).toBe(true);
-    expect(localStorage.getItem('rectangles.game')).toBeNull();
-
-    const second = newSession();
-    expect(second.gameId()).toMatch(/^5x5#/);
-    expect(second.gameId()).not.toBe(first.gameId());
-    expect(second.completed()).toBe(false);
-    expect(second.canUndo()).toBe(false);
-  });
-
-  it('starts a new puzzle if the saved game is unreadable', () => {
-    localStorage.setItem('rectangles.game', '{"params":"7x7","moves":[{"kind":"nonsense"}],"position":1}');
-    const session = newSession();
-    expect(session.gameId()).toMatch(/^7x7#\d+$/);
-    expect(session.canUndo()).toBe(false);
-  });
-
-  it('ignores a remembered size that is no longer valid', () => {
-    localStorage.setItem('rectangles.size', '0x0');
-    const session = newSession();
-    expect(session.gameId()).toMatch(/^7x7#/);
-  });
-
-  it('celebrates a puzzle the player solves, but not one solved with Solve', () => {
-    const session = newSession();
-
-    // With the Solve button: solved, but no celebration.
-    session.solve();
-    expect(session.completed()).toBe(true);
-    expect(session.celebrate()).toBe(false);
-
-    // Undo, then complete the same answer as a player's move: celebration.
-    const answer = session.state().rects;
-    session.undo();
-    session.move({ kind: 'solve', rects: answer });
-    expect(session.celebrate()).toBe(true);
-
-    // Any later action ends it.
-    session.undo();
-    expect(session.celebrate()).toBe(false);
+    expect(switches()[0]).toEqual(['Lock rectangles', true]);
+    expect(localStorage.getItem('rectangles.lock')).toBe('1');
   });
 });
