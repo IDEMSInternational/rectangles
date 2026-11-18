@@ -8,7 +8,9 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
+import { BoardFinger } from '@studio/container/board-finger';
 import { placeLabel } from '@studio/container/board-label';
+import { BoardLabelView } from '@studio/container/board-label-view';
 import { BoardPointer } from '@studio/container/board-pointer';
 import { squareAt } from '@studio/engine/geometry';
 import { Rect } from '../geometry';
@@ -30,6 +32,7 @@ const INSET = 0.07;
 /** Board for Rectangles, drawn as SVG in cell units. Emits moves; never changes state itself. */
 @Component({
   selector: 'rectangles-board',
+  imports: [BoardFinger, BoardLabelView],
   templateUrl: './rectangles-board.html',
   styleUrl: './rectangles-board.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -90,9 +93,9 @@ export class RectanglesBoard {
     const end = { x: r.x + r.w - 0.5, y: r.y + r.h - 0.5 };
     return {
       tile: inset(r),
-      gesture: hint.gesture,
-      centre: { x: r.x + r.w / 2, y: r.y + r.h / 2 },
-      path: `M ${start.x} ${start.y} L ${end.x} ${end.y}`,
+      // The finger draws the rectangle corner to corner, or taps its middle.
+      along: hint.gesture === 'drag' ? [start, end] : null,
+      tap: hint.gesture === 'drag' ? null : { x: r.x + r.w / 2, y: r.y + r.h / 2 },
     };
   });
 
