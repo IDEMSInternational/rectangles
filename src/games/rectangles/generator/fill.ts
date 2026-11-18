@@ -1,5 +1,5 @@
 import { RandomState } from '@studio/engine/random/random-state';
-import { Size } from '../geometry';
+import { Size } from '@studio/engine/geometry';
 import { EMPTY, Layout, SINGLETON, candidateRects, emptyLayout, placeRect } from './layout';
 
 /**
