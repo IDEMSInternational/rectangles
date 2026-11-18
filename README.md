@@ -113,8 +113,11 @@ Android release shared by every IDEMS game, from games-common-core:
 explains how it works and how a game is set up for it: the upload key, the
 Google Play service account, their secrets (`SIGNING_KEY`, `ALIAS`,
 `KEY_STORE_PASSWORD`, `KEY_PASSWORD`, `GOOGLE_PLAY_SERVICE_ACCOUNT_JSON`), and
-the first upload, which Google Play only takes by hand. For Rectangles, none of
-that is done yet.
+the first upload, which Google Play only takes by hand. For Rectangles that's
+done: the upload key's secrets are in this repository, the service account's
+(`GOOGLE_PLAY_SERVICE_ACCOUNT_JSON`) is shared by the IDEMS organisation, and
+the first bundle (built with track "none") was uploaded by hand to internal
+testing, so later releases upload by themselves.
 
 The App ID is set in several files;
 [A game's App ID](https://github.com/IDEMSInternational/games-common-core#a-games-app-id) lists them and
