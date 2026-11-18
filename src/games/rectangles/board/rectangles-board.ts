@@ -9,8 +9,10 @@ import {
   viewChild,
 } from '@angular/core';
 import { placeLabel } from '@studio/container/board-label';
+import { BoardPointer } from '@studio/container/board-pointer';
+import { squareAt } from '@studio/engine/geometry';
 import { Rect } from '../geometry';
-import { RectanglesDrag, cellAt } from '../input';
+import { RectanglesDrag } from '../input';
 import { RectanglesMove } from '../moves';
 import { RectanglesState, breaksRules } from '../state';
 import { RectanglesHint } from '../tutorial';
@@ -43,7 +45,11 @@ export class RectanglesBoard {
   readonly move = output<RectanglesMove>();
 
   private readonly svg = viewChild.required<ElementRef<SVGSVGElement>>('svg');
-  private drag: RectanglesDrag | null = null;
+  /** The finger on the board, given as the cell under it. */
+  private readonly pointer = new BoardPointer<RectanglesDrag>(
+    () => this.svg().nativeElement,
+    (at) => squareAt(this.state(), at.x, at.y),
+  );
   /** The rectangle being drawn, while a drag is in progress, and whether Lock blocks it. */
   protected readonly preview = signal<{ rect: Rect; blocked: boolean } | null>(null);
 
@@ -111,37 +117,25 @@ export class RectanglesBoard {
   });
 
   protected onPointerDown(event: PointerEvent): void {
-    if (event.button !== 0) return;
-    event.preventDefault();
-    this.svg().nativeElement.setPointerCapture(event.pointerId);
-    this.drag = new RectanglesDrag(this.cellUnder(event));
+    this.pointer.down(event, (cell) => new RectanglesDrag(cell));
   }
 
   protected onPointerMove(event: PointerEvent): void {
-    if (!this.drag) return;
-    this.drag.moveTo(this.cellUnder(event));
-    if (this.drag.isRectangle) {
-      this.preview.set({ rect: this.drag.rect, blocked: this.drag.isBlocked(this.state(), this.locked()) });
+    const drag = this.pointer.move(event);
+    if (drag?.isRectangle) {
+      this.preview.set({ rect: drag.rect, blocked: drag.isBlocked(this.state(), this.locked()) });
     }
   }
 
   protected onPointerUp(event: PointerEvent): void {
-    if (!this.drag) return;
-    this.drag.moveTo(this.cellUnder(event));
-    const move = this.drag.finish(this.state(), this.locked());
+    const move = this.pointer.up(event)?.finish(this.state(), this.locked());
     this.cancelDrag();
     if (move) this.move.emit(move);
   }
 
   protected cancelDrag(): void {
-    this.drag = null;
+    this.pointer.cancel();
     this.preview.set(null);
-  }
-
-  private cellUnder(event: PointerEvent) {
-    const matrix = this.svg().nativeElement.getScreenCTM()?.inverse();
-    const p = new DOMPoint(event.clientX, event.clientY).matrixTransform(matrix);
-    return cellAt(this.state(), p.x, p.y);
   }
 }
 

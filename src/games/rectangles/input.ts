@@ -1,18 +1,12 @@
-import { Point, Rect, Size } from './geometry';
+import { Point } from '@studio/engine/geometry';
+import { Rect } from './geometry';
 import { RectanglesMove } from './moves';
 import { RectanglesState, rectsOverlap } from './state';
-
-/** The cell under a position given in cells (e.g. 2.4, 0.9), clamped to the board. */
-export function cellAt(size: Size, cellX: number, cellY: number): Point {
-  return {
-    x: Math.min(Math.max(Math.floor(cellX), 0), size.w - 1),
-    y: Math.min(Math.max(Math.floor(cellY), 0), size.h - 1),
-  };
-}
 
 /**
  * One touch on the board. Dragging from cell to cell draws the rectangle
  * spanning them; a tap (no movement) removes the rectangle under it.
+ * Positions are cells (the board gives it the cell under the finger).
  */
 export class RectanglesDrag {
   private readonly start: Point;

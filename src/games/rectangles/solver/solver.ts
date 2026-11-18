@@ -1,5 +1,6 @@
 import { RandomState } from '@studio/engine/random/random-state';
-import { Point, Rect, Size, forEachCell, rectContains } from '../geometry';
+import { Point, Size } from '@studio/engine/geometry';
+import { Rect, forEachCell, rectContains } from '../geometry';
 
 /**
  * One clue number and the cells where it might be. When solving a real

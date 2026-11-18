@@ -1,18 +1,11 @@
-/** Basic shapes shared by the Rectangles modules. Coordinates are in cells. */
-
-export interface Point {
-  x: number;
-  y: number;
-}
+/**
+ * Rectangles' own shapes, in cells. Positions and sizes (Point, Size) are
+ * shared by every game: @studio/engine/geometry.
+ */
 
 export interface Rect {
   x: number;
   y: number;
-  w: number;
-  h: number;
-}
-
-export interface Size {
   w: number;
   h: number;
 }

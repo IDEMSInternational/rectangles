@@ -1,4 +1,5 @@
-import { Rect, Size, rectContains } from './geometry';
+import { Size } from '@studio/engine/geometry';
+import { Rect, rectContains } from './geometry';
 
 /** A position in a game of Rectangles. Treated as immutable. */
 export interface RectanglesState extends Size {

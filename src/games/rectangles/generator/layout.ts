@@ -1,4 +1,5 @@
-import { Rect, Size } from '../geometry';
+import { Size } from '@studio/engine/geometry';
+import { Rect } from '../geometry';
 
 /** Marks a cell not yet covered by any rectangle. */
 export const EMPTY = -1;

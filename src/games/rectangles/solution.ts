@@ -1,4 +1,5 @@
-import { Rect, Size } from './geometry';
+import { Size } from '@studio/engine/geometry';
+import { Rect } from './geometry';
 import { Layout, cellAt } from './generator/layout';
 
 /**
