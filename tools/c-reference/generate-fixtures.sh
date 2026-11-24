@@ -41,6 +41,6 @@ const fs = require("fs");
 const rows = fs.readFileSync(process.argv[1], "utf8").trim().split(/\r?\n/)
   .map(l => { const [params, seed, description, solution] = l.split("\t");
               return { params, seed, description, solution }; });
-fs.writeFileSync(process.argv[2], JSON.stringify(rows, null, 1) + "\n");
+fs.writeFileSync(process.argv[2], JSON.stringify(rows, null, 2) + "\n");
 console.log(rows.length + " reference puzzles written to " + process.argv[2]);
 ' "$TSV" "$OUT"
