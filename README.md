@@ -34,7 +34,8 @@ Run `npm install` here only, never inside `games-common-core`.
 
 ```sh
 npm start              # dev server at http://localhost:4200
-npm test               # unit tests, including 680 puzzles checked against the original
+npm test               # unit tests, with a sample of the puzzles recorded from the original
+npm run test:puzzles   # all 680 recorded puzzles: run it after changing the generator or solver
 npm run build          # production web build
 npm run apk            # Android debug APK -> Rectangles.apk
 npm run aab            # Android release bundle for Google Play -> Rectangles.aab
