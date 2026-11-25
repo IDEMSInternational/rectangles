@@ -9,6 +9,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
+    "test:puzzles": "node games-common-core/tools/test-all-puzzles.mjs",
     "apk": "node tools/build-apk.mjs",
     "aab": "node tools/build-aab.mjs",
     "version": "node games-common-core/ios-release/ios-version.mjs && git add ios/App/App.xcodeproj/project.pbxproj",
